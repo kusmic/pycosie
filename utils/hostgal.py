@@ -15,7 +15,7 @@ from scipy.ndimage import convolve
 # Okay, need simulation cosmology and size
 
 # All absorption lines calculated in quasarcosie.
-ion_lines = ("OI1302", "CIV1548", "CII1335", "MgII2796", "SiII1260", "SiIV1394")
+ion_lines = tuple(("OI1302", "CIV1548", "CII1335", "MgII2796", "SiII1260", "SiIV1394"))
 N_LLP = 1625 # Hard-coded grid space for LLP grid
 UINT_MAX = 4294967295 # flag for unlaunched
 
