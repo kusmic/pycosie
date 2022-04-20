@@ -90,7 +90,10 @@ def __print_complete(counter, N):
     percentage = f"..... {percent} launched particles processed"
     print(percentage, end="\r")
 
-def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, gal_buffer):
+def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
+             colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
+             Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
+             gal_buffer, f=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -151,6 +154,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, col
         Maximum number of galaxies in a grid cell for LLP grid.
     gal_buffer: int
         Index buffer to search around LLP grid.
+    f: File, default=None
+        File stream for debug mode. Defaults to None if not debug mode.
 
     Returns
     -------
@@ -182,8 +187,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, col
 
                 # ADD check if x, y, z already larger than r_search
                 r_s = r_search / lbox.to("kpccm/h").value[0]
-                if xSys > r_s or ySys > r_s or zSys > r_s:
-                    continue
+                #if xSys > r_s or ySys > r_s or zSys > r_s:
+                #    continue
                 
                 rSys = np.array([xSys, ySys, zSys])
                 rDiff = np.sqrt( np.sum( (pos-rSys)**2 ) ) # box unit - box unit
@@ -206,7 +211,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, col
                         crit2 = (igas < 0) or (jgas < 0) or (kgas < 0)
                         if crit1 or crit2:
                             print(LLP, pos)
-                            partID = gasIDs[gi]
+                            partID = gasIDArr[gi]
                             f.write(f"{partID} {LLP} {pos[0]} {pos[1]} {pos[2]} {igas} {jgas} {kgas}\n")
                         continue
                     # creating array that will return with Manager.list
@@ -229,7 +234,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, col
                     for gali, galp in enumerate(galPosArr): # should be in ckpc/h
                         
                         # Now checking for galaxies that are in the grid cells
-                        galp /= lbox.to(kpccm/h).value[0] #CHECKME if outputs still bad can have bad units here
+                        galp /= lbox.to("kpccm/h").value[0] #CHECKME if outputs still bad can have bad units here
 
                         if xmin_ind < 0: # negative index
                             # Check either near end [min, 1] or periodic wrap to beginning [0,max]
@@ -251,7 +256,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, col
                         
                         if inX and inY and inZ:
                             # if galaxy in grid cell, hold as potential host
-                            galOfLLP[ind_ret] = galID[gali]
+                            galOfLLP[ind_ret] = galIDArr[gali]
                             ind_ret += 1
                         # Now extracting all data out
                     # print(galOfLLP)
@@ -328,6 +333,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         f.write("ParticleID LLP x y z i j k\n") # column names
         f.close()
         f = open("particle_LLP_debug.txt", "a") # now in append mode
+    else:
+        f = None
 
     print(f"Run on {datetime.now()}\n") # tell time of run
     DXDZ = 0.35171 # differential movement w.r.t. z for x and y, used to find
@@ -411,10 +418,10 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
 
         vpmOut = dict()
         # Will read in all species, create single referenced dictionary
-        for sys in vpmFiles:
+        for sys_abs in vpmFiles:
             speciesName = "."
             for ionName in ion_lines:
-                if ionName in sys:
+                if ionName in sys_abs:
                     speciesName = ionName
                     break
             sysID, sysVel = np.loadtxt(sys, skiprows=2, usecols=(0,2), unpack=True)
@@ -465,7 +472,6 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             # This creates the indices to slice the main array
 
             procsArr = []
-            argList = []
             # Now starting multiprocessing
             for i in range(nproc):
                 colSpecArr.append(manager.list())
@@ -475,7 +481,12 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
                 # creating manager lists to append to in processes
 
                 # creating ugly argument tuple to pass into Process
-                argTup = (gasIDs[ni[i]:ni[i+1]], gasCoords[ni[i]:ni[i+1]], LLPs[ni[i]:ni[i+1]], vpmOut, galPos, galID, colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, gal_buffer)
+                argTup = (gasIDs[ni[i]:ni[i+1]], gasCoords[ni[i]:ni[i+1]], 
+                          LLPs[ni[i]:ni[i+1]], vpmOut, galPos, galID, 
+                          colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
+                          colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
+                          DYDZ, r_search, lbox, counter, maxCountGal, 
+                          gal_buffer, f)
                 #argument to pass into __part__
 
                 # staring multiprocessing
