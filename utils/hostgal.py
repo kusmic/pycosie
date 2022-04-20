@@ -424,7 +424,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
                 if ionName in sys_abs:
                     speciesName = ionName
                     break
-            sysID, sysVel = np.loadtxt(sys, skiprows=2, usecols=(0,2), unpack=True)
+            sysID, sysVel = np.loadtxt(sys_abs, skiprows=2, usecols=(0,2), unpack=True)
             vpmOut[speciesName] = { "v":sysVel, "ID":sysID }
         
         
