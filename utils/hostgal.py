@@ -275,7 +275,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                     # print(ion, gasIDs[gi], sysID[vi], galOfLLP)
 
 
-def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, catmode="galaxy"):
+def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
+                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, catmode="galaxy"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -505,7 +506,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
                           colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
-                          gal_buffer, f)
+                          gal_buffer, N_LLP, f)
                 #argument to pass into __part__
 
                 # staring multiprocessing
