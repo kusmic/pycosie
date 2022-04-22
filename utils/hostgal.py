@@ -573,7 +573,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         refTable = Table([colSpecies, colAbsorberID, colGasID, colGalaxyID], names=("SpeciesLine","AbsorberID", "GasParticleID", caes_col), dtype=[int, int, int, int])
         
         if write: # if you want to write it out
-            fname = f"refTab_r{r_search}_{snapi:03}.hdf5"
+            fname = f"refTab_r{r_search}_{snapi:03}_{catmode}.hdf5"
             __save_hdf5__(refTable, fname, catmode)
             #refTable.write(fname, format="hdf5", path="ReferenceData", compression=True)
     print(f"\nDone on {datetime.now()}\n.")
