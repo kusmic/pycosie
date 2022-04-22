@@ -247,18 +247,24 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                         if xmin_ind < 0: # negative index
                             # Check either near end [min, 1] or periodic wrap to beginning [0,max]
                             inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind])
+                        elif xmax_ind > N_LLP:
+                            inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind-N_LLP])
                         else:
                             inX = galp[0] >= xEdges[xmin_ind] and galp[0] < xEdges[xmax_ind]
                             
                         if ymin_ind < 0: # negative index
                             # Check either near end [min, 1] or periodic wrap to beginning [0,max]
                             inY = galp[1] >= yEdges[ymin_ind] and galp[1] < 1. or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind])
+                        elif ymax_ind > N_LLP:
+                            inY = (galp[1] >= yEdges[ymin_ind] and galp[1] < 1.) or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind-N_LLP])
                         else:
                             inY = galp[1] >= yEdges[ymin_ind] and galp[1] < yEdges[ymax_ind]
 
                         if zmin_ind < 0: # negative index
                             # Check either near end [min, 1] or periodic wrap to beginning [0,max]
                             inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < 1. or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind])
+                        elif zmax_ind > N_LLP:
+                            inZ = (galp[2] >= zEdges[zmin_ind] and galp[2] < 1.) or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind-N_LLP])
                         else:
                             inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < zEdges[zmax_ind]
                         
