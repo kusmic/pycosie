@@ -19,14 +19,9 @@ ion_lines = tuple(("OI1302", "CIV1548", "CII1335", "MgII2796", "SiII1260", "SiIV
 N_LLP = 1625 # Hard-coded grid space for LLP grid
 UINT_MAX = 4294967295 # flag for unlaunched
 
-xEdges = np.linspace(0.,1.,N_LLP)
-yEdges = np.linspace(0.,1.,N_LLP)
-zEdges = np.linspace(0.,1.,N_LLP)
-# Grid edges for LLP grid
-
 #print(len(xEdges))
 
-def __save_hdf5__(table, fname):
+def __save_hdf5__(table, fname, catmode):
     """Save to HDF5
 
     This function will save the inputted table into an HDF5 file holding both 
@@ -41,6 +36,8 @@ def __save_hdf5__(table, fname):
     
     fname: string
         String holding the file path name to save to.
+    catmode: string
+        Mode reading caesar catalog: galaxies or halos.
 
     Returns
     -------
@@ -60,7 +57,11 @@ def __save_hdf5__(table, fname):
         print("Saving gas IDs...")
         gasID = refdata.create_dataset("GasParticleID", data=table["GasParticleID"])
         print("Saving galaxy IDs...")
-        galID = refdata.create_dataset("GalaxyIDs", data=table["GalaxyIDs"])
+        if catmode == "galaxy":
+            colname = "GalaxyID"
+        else:
+            colname = "HaloID"
+        galID = refdata.create_dataset(colname, data=table[colname])
         print("Creating lookup...")
         specieslist = f.create_group("SpeciesLookup")
         for ioni, ion in enumerate(ion_lines):
@@ -93,7 +94,7 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, f=None):
+             gal_buffer, N_LLP, f=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -154,6 +155,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         Maximum number of galaxies in a grid cell for LLP grid.
     gal_buffer: int
         Index buffer to search around LLP grid.
+    N_LLP: int
+        Grid width of last launch position grid
     f: File, default=None
         File stream for debug mode. Defaults to None if not debug mode.
 
@@ -161,6 +164,11 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
     -------
     None.
     """
+    #Grid edges
+    xEdges = np.linspace(0.,1.,N_LLP+1)
+    yEdges = np.linspace(0.,1.,N_LLP+1)
+    zEdges = np.linspace(0.,1.,N_LLP+1)
+    
     # The searching
 
     for gi in range(gasIDArr.size):
@@ -267,7 +275,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                     # print(ion, gasIDs[gi], sysID[vi], galOfLLP)
 
 
-def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1):
+def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, catmode="galaxy"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -318,6 +326,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         search.
     nproc: int, default=1
         Number of processor cores to use for the analysis.
+    catmode: str{"galaxy","halo"}, default="galaxy"
+        Designates whether to get the positions and IDs of galaxies or halos,
+        Default is for galaxies. Error if neither selected.
 
     Returns
     -------
@@ -328,6 +339,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         This output signals that the method was run in debug mode.
 
     """
+
     if __debugMode__: # Running debug mode
         f = open("particle_LLP_debug.txt", "w") # create debug output file
         f.write("ParticleID LLP x y z i j k\n") # column names
@@ -388,13 +400,19 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         Hz = H0 * np.sqrt((OmegaM * np.power(1+z,3)) + OmegaL)
         # Hubble constant at that redshift
 
-        # Getting gas information
+        # Getting catalog information
         gasData = snapFile.all_data()
-        # Getting galaxy IDs in caesar
-        galID = np.asarray([i.GroupID for i in haloFile.galaxies])
+        if catmode == "galaxy":
+            caesar_loader = haloFile.galaxies
+        elif catmode == "halo":
+            caesar_loader = haloFile.halos
+        else:
+            raise ValueError("Argument 'catmode' contains an invalid value. Must be either 'galaxy' or 'halo'")
+
+        # Getting galaxy/halo IDs in caesar
+        galID = np.asarray([i.GroupID for i in caesar_loader])
         # And positions, in box length units
-        galPos = np.asarray([i.pos.to("kpccm/h").value for i in haloFile.galaxies])
-        # Now reading each VPM(.MERGED) file
+        galPos = np.asarray([i.pos.to("kpccm/h").value for i in caesar_loader])
 
         # This will hold all data of IDs for each sim snapshot
         colSpecies = []
@@ -416,6 +434,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         LLPs = LLP_arr[hasLaunched]
         # final arrays to analyze of gas ID, position, and LLPs after culling
 
+        # Now reading each VPM(.MERGED) file
         vpmOut = dict()
         # Will read in all species, create single referenced dictionary
         for sys_abs in vpmFiles:
@@ -550,11 +569,12 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             return(100)
             
         # Creating reference table
-        refTable = Table([colSpecies, colAbsorberID, colGasID, colGalaxyID], names=("SpeciesLine","AbsorberID", "GasParticleID", "GalaxyIDs"), dtype=[int, int, int, int])
+        caes_col = "GalaxyID" if catmode == "galaxy" else "HaloID"
+        refTable = Table([colSpecies, colAbsorberID, colGasID, colGalaxyID], names=("SpeciesLine","AbsorberID", "GasParticleID", caes_col), dtype=[int, int, int, int])
         
         if write: # if you want to write it out
             fname = f"refTab_r{r_search}_{snapi:03}.hdf5"
-            __save_hdf5__(refTable, fname)
+            __save_hdf5__(refTable, fname, catmode)
             #refTable.write(fname, format="hdf5", path="ReferenceData", compression=True)
     print(f"\nDone on {datetime.now()}\n.")
     return(refTable) # all done!
