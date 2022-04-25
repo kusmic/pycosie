@@ -242,7 +242,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                     for gali, galpos in enumerate(galPosArr): # should be in ckpc/h
                         
                         # Now checking for galaxies that are in the grid cells
-                        galp = galpos / lbox.to("kpccm/h").value[0] #CHECKME if outputs still bad can have bad units here
+                        galp = galpos / lbox.to("kpccm/h").value #CHECKME if outputs still bad can have bad units here
 
                         if xmin_ind < 0: # negative index
                             # Check either near end [min, 1] or periodic wrap to beginning [0,max]
