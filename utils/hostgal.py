@@ -224,7 +224,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                         continue
                     # creating array that will return with Manager.list
                     # based on moax counts on galaxies in LLP grid + buffer
-                    galOfLLP = np.ones(int(maxCountGal)) * -99 
+                    galOfLLP = np.ones(int(maxCountGal), dtype=int) * -99 
                     ind_ret = 0
                     # indexing value for this returned grid
 
@@ -270,7 +270,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                         
                         if inX and inY and inZ:
                             # if galaxy in grid cell, hold as potential host
-                            galOfLLP[ind_ret] = galIDArr[gali]
+                            galOfLLP[ind_ret] = int(galIDArr[gali])
                             ind_ret += 1
                         # Now extracting all data out
                     # print(galOfLLP)
