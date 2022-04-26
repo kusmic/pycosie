@@ -486,7 +486,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             del Hist_gal_temp
         elif pooling == "mean":
             N_gal = galID.size
-            n = N_gal * (gal_buffer / N_LLP)**3
+            n = N_gal * ((2*gal_buffer+1) / N_LLP)**3
             maxCountGal = int(np.ceil(n))
         elif type(pooling) == int:
             maxCountGal = pooling
