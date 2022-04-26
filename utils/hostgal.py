@@ -282,7 +282,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
-                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, catmode="galaxy"):
+                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, 
+                catmode="galaxy", galpooling="mean"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -336,6 +337,13 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
     catmode: str{"galaxy","halo"}, default="galaxy"
         Designates whether to get the positions and IDs of galaxies or halos,
         Default is for galaxies. Error if neither selected.
+    pooling: int, str{"mean","convolve"}, default="mean"
+        Designates the pooling method to find how many elements to store in
+        in Halo IDs/Galaxy IDs. If an integer, it will create that number
+        of elements. If "mean" then it will determine from mean number
+        density of objects versus the window of volume observed. If 
+        "convolve" then does a convolution sum over volume window. This
+        method is the most memory-intensive.
 
     Returns
     -------
@@ -464,17 +472,26 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         right_edge = snapFile.domain_right_edge.value
         g_range = [[l, r] for l,r in zip(left_edge,right_edge)]
 
-        # Getting max number of galaxies in index + neighbors given by buffer
-        Hist_gal_temp, gal_edges = np.histogramdd(galPos, bins=N_LLP, range=g_range)
-        buffer_width = 2*gal_buffer + 1
-        # creating square filter
-        sum_filter = np.ones((buffer_width,buffer_width,buffer_width), dtype=int)
-        # convolve on square filter == summing around indices
-        Hist_gal = convolve(Hist_gal_temp, sum_filter, mode="wrap")
+        if pooling == "convolve":
+            # Getting max number of galaxies in index + neighbors given by buffer
+            Hist_gal_temp, gal_edges = np.histogramdd(galPos, bins=N_LLP, range=g_range)
+            buffer_width = 2*gal_buffer + 1
+            # creating square filter
+            sum_filter = np.ones((buffer_width,buffer_width,buffer_width), dtype=int)
+            # convolve on square filter == summing around indices
+            Hist_gal = convolve(Hist_gal_temp, sum_filter, mode="wrap")
                     
-        maxCountGal = np.max(Hist_gal)
-        del Hist_gal
-        del Hist_gal_temp
+            maxCountGal = int(np.max(Hist_gal))
+            del Hist_gal
+            del Hist_gal_temp
+        elif pooling == "mean":
+            N_gal = galID.size
+            n = N_gal * (gal_buffer / N_LLP)**3
+            maxCountGal = int(np.ceil(n))
+        elif type(pooling) == int:
+            maxCountGal = pooling
+        else:
+            raise ValueError("Improper value for pooling: must be int, 'mean', or 'convolve'")
 
         colGalIDArr = []
 
