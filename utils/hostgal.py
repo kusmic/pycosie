@@ -283,7 +283,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
                 N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, 
-                catmode="galaxy", galpooling="mean"):
+                catmode="galaxy", pooling="mean"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
