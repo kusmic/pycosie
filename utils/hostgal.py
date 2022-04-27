@@ -282,7 +282,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
-                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_bfr=1, nproc=1, 
+                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1, nproc=1, 
                 catmode="galaxy", pooling="mean"):
     """Do Hostgals
 
@@ -328,7 +328,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
     __debugMode__: bool, default=False
         Tell whether to enter debug mode. This is a developer's tool and not
         necessary for a user.
-    gal_bfr: int, default=1
+    gal_buffer: int, default=1
         Buffer zone searching around the LLP grid. As in, this looks an extra
         number of indices around a chosen index for a galaxy. It is a square
         search.
@@ -467,7 +467,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         colGasIDArr = []
 
         # Setting galaxy buffer
-        gal_buffer = gal_bfr
+        # gal_buffer = gal_bfr
         left_edge = snapFile.domain_left_edge.value
         right_edge = snapFile.domain_right_edge.value
         g_range = [[l, r] for l,r in zip(left_edge,right_edge)]
@@ -597,7 +597,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         refTable = Table([colSpecies, colAbsorberID, colGasID, colGalaxyID], names=("SpeciesLine","AbsorberID", "GasParticleID", caes_col), dtype=[int, int, int, int])
         
         if write: # if you want to write it out
-            fname = f"refTab_r{r_search}_{snapi:03}_{catmode}.hdf5"
+            fname = f"refTab_r{r_search}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
             __save_hdf5__(refTable, fname, catmode)
             #refTable.write(fname, format="hdf5", path="ReferenceData", compression=True)
     print(f"\nDone on {datetime.now()}\n.")
