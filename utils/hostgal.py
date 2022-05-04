@@ -94,7 +94,7 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, N_LLP, f=None):
+             gal_buffer, N_LLP, pooling, f=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -157,6 +157,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         Index buffer to search around LLP grid.
     N_LLP: int
         Grid width of last launch position grid
+    pooling: int, str
+        From do_hostgal, the galaxy pooling method. Check if "nearest"
     f: File, default=None
         File stream for debug mode. Defaults to None if not debug mode.
 
@@ -230,49 +232,75 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
                     # GEtting index of LLP grid
                     # Getting index ranges considering index buffer
-                    
-                    xmin_ind = igas - gal_buffer
-                    xmax_ind = igas + gal_buffer +1
+                    if pooling != "nearest":
+                        xmin_ind = igas - gal_buffer
+                        xmax_ind = igas + gal_buffer +1
 
-                    ymin_ind = jgas - gal_buffer
-                    ymax_ind = jgas + gal_buffer +1
+                        ymin_ind = jgas - gal_buffer
+                        ymax_ind = jgas + gal_buffer +1
 
-                    zmin_ind = kgas - gal_buffer
-                    zmax_ind = kgas + gal_buffer +1
-                    for gali, galpos in enumerate(galPosArr): # should be in ckpc/h
+                        zmin_ind = kgas - gal_buffer
+                        zmax_ind = kgas + gal_buffer +1
+                        for gali, galpos in enumerate(galPosArr): # should be in ckpc/h
                         
-                        # Now checking for galaxies that are in the grid cells
-                        galp = galpos / lbox.to("kpccm/h").value #CHECKME if outputs still bad can have bad units here
+                            # Now checking for galaxies that are in the grid cells
+                            galp = galpos / lbox.to("kpccm/h").value #CHECKME if outputs still bad can have bad units here
 
-                        if xmin_ind < 0: # negative index
-                            # Check either near end [min, 1] or periodic wrap to beginning [0,max]
-                            inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind])
-                        elif xmax_ind > N_LLP:
-                            inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind-N_LLP])
-                        else:
-                            inX = galp[0] >= xEdges[xmin_ind] and galp[0] < xEdges[xmax_ind]
+                            if xmin_ind < 0: # negative index
+                                # Check either near end [min, 1] or periodic wrap to beginning [0,max]
+                                inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind])
+                            elif xmax_ind > N_LLP:
+                                inX = (galp[0] >= xEdges[xmin_ind] and galp[0] < 1.) or (galp[0] >= 0. and galp[0] < xEdges[xmax_ind-N_LLP])
+                            else:
+                                inX = galp[0] >= xEdges[xmin_ind] and galp[0] < xEdges[xmax_ind]
                             
-                        if ymin_ind < 0: # negative index
-                            # Check either near end [min, 1] or periodic wrap to beginning [0,max]
-                            inY = galp[1] >= yEdges[ymin_ind] and galp[1] < 1. or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind])
-                        elif ymax_ind > N_LLP:
-                            inY = (galp[1] >= yEdges[ymin_ind] and galp[1] < 1.) or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind-N_LLP])
-                        else:
-                            inY = galp[1] >= yEdges[ymin_ind] and galp[1] < yEdges[ymax_ind]
+                            if ymin_ind < 0: # negative index
+                                # Check either near end [min, 1] or periodic wrap to beginning [0,max]
+                                inY = galp[1] >= yEdges[ymin_ind] and galp[1] < 1. or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind])
+                            elif ymax_ind > N_LLP:
+                                inY = (galp[1] >= yEdges[ymin_ind] and galp[1] < 1.) or (galp[1] >= 0. and galp[1] < yEdges[ymax_ind-N_LLP])
+                            else:
+                                inY = galp[1] >= yEdges[ymin_ind] and galp[1] < yEdges[ymax_ind]
 
-                        if zmin_ind < 0: # negative index
-                            # Check either near end [min, 1] or periodic wrap to beginning [0,max]
-                            inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < 1. or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind])
-                        elif zmax_ind > N_LLP:
-                            inZ = (galp[2] >= zEdges[zmin_ind] and galp[2] < 1.) or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind-N_LLP])
-                        else:
-                            inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < zEdges[zmax_ind]
+                            if zmin_ind < 0: # negative index
+                                # Check either near end [min, 1] or periodic wrap to beginning [0,max]
+                                inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < 1. or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind])
+                            elif zmax_ind > N_LLP:
+                                inZ = (galp[2] >= zEdges[zmin_ind] and galp[2] < 1.) or (galp[2] >= 0. and galp[2] < zEdges[zmax_ind-N_LLP])
+                            else:
+                                inZ = galp[2] >= zEdges[zmin_ind] and galp[2] < zEdges[zmax_ind]
                         
-                        if inX and inY and inZ:
-                            # if galaxy in grid cell, hold as potential host
-                            galOfLLP[ind_ret] = int(galIDArr[gali])
-                            ind_ret += 1
-                        # Now extracting all data out
+                            if inX and inY and inZ:
+                                # if galaxy in grid cell, hold as potential host
+                                galOfLLP[ind_ret] = int(galIDArr[gali])
+                                ind_ret += 1
+
+                    else:
+                        x_llp = (xEdges[igas]+xEdges[igas+1])/2
+                        y_llp = (yEdges[jgas]+yEdges[jgas+1])/2
+                        z_llp = (zEdges[kgas]+zEdges[kgas+1])/2
+
+                        r_arr = []
+                        gali_arr = []
+                        for gali, galpos in enumerate(galPosArr):
+                            galp = galpos / lbox.to("kpccm/h").value
+                            dx = np.abs(galp[0]-x_llp)
+                            if dx > 0.5: # box units
+                                dx = 1 - dx
+                            dy = np.abs(galp[1]-y_llp)
+                            if dy > 0.5: # box units
+                                dy = 1 - dy
+                            dz = np.abs(galp[2]-z_llp)
+                            if dz > 0.5: # box units
+                                dz = 1 - dz
+                            r = np.sqrt( np.power([dx,dy,dz],2).sum() )
+                            r_arr.append(r)
+                            gali_arr.append(gali)
+                        closest_gal = np.argmin(r_arr)
+                        gali = gali_arr[closest_gal]
+                        galOfLLP[ind_ret] = int(galIDArr[gali])
+
+                    # Now extracting all data out
                     # print(galOfLLP)
                     colSpecies.append(ioni)
                     gasIDOut.append(gasIDArr[gi])
@@ -343,7 +371,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         of elements. If "mean" then it will determine from mean number
         density of objects versus the window of volume observed. If 
         "convolve" then does a convolution sum over volume window. This
-        method is the most memory-intensive.
+        method is the most memory-intensive. If pooling is "nearest" then it
+        does not pool galaxies in a grid; instead it gets the coordinate of
+        the center of the LLP grid and finds the closest galaxy.
 
     Returns
     -------
@@ -488,6 +518,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             N_gal = galID.size
             n = N_gal * ((2*gal_buffer+1) / N_LLP)**3
             maxCountGal = int(np.ceil(n))
+        elif pooling == "nearest":
+            maxCountGal = 1
         elif type(pooling) == int:
             maxCountGal = pooling
         else:
@@ -529,7 +561,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
                           colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
-                          gal_buffer, N_LLP, f)
+                          gal_buffer, N_LLP, pooling, f)
                 #argument to pass into __part__
 
                 # staring multiprocessing
