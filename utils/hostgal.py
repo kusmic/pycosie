@@ -311,7 +311,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
                 N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1, nproc=1, 
-                catmode="galaxy", pooling="mean"):
+                catmode="galaxy", pooling="mean", savename=None):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -629,7 +629,10 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         refTable = Table([colSpecies, colAbsorberID, colGasID, colGalaxyID], names=("SpeciesLine","AbsorberID", "GasParticleID", caes_col), dtype=[int, int, int, int])
         
         if write: # if you want to write it out
-            fname = f"refTab_r{r_search}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
+            if savename == None:
+                fname = f"refTab_r{r_search}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
+            else:
+                fname = savename
             __save_hdf5__(refTable, fname, catmode)
             #refTable.write(fname, format="hdf5", path="ReferenceData", compression=True)
     print(f"\nDone on {datetime.now()}\n.")
