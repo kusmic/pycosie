@@ -1,4 +1,4 @@
-import hostgal
+import .hostgal
 
-import powerspec
+import .powerspec
 
