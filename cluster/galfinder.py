@@ -1,5 +1,5 @@
 import numpy as np
-from rockstar import RockstarCatalog
+from .rockstar import RockstarCatalog
 import yt
 from yt.data_objects.level_sets.api import *    
 
