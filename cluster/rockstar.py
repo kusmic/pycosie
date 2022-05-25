@@ -23,9 +23,17 @@ class RockstarCatalog():
                     chars = set(".;0123456789\n")
                     line = np.array([i for i in re.findall(r'\w+\D',x) if not any((c in chars) for c in i)], dtype=str)
                     s = np.array(re.findall(r"[-+]?(?:\d*\.\d+|\d+)",x), dtype=str)
-            i_Om = np.where(line=="Om")
-            i_Ol = np.where(line=="Ol")
-            i_h = np.where(line=="h")
+            i_Om = 0#np.where(line=="Om")
+            i_Ol = 0#np.where(line=="Ol")
+            i_h = 0#np.where(line=="h")
+            for i in range(len(line)):
+                if "Om" in x:
+                    i_Om = i
+                elif "Ol" in x:
+                    i_Ol = i
+                elif "h" in x:
+                    i_h = i
+
             self.Om = float(s[i_Om])
             self.Ol = float(s[i_Ol])
             self.Or = 1 - self.Om - self.Ol
