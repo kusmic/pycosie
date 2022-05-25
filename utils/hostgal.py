@@ -9,6 +9,7 @@ import multiprocessing as mp
 import sys
 import time
 from datetime import datetime
+from pycosie.cluster.rockstar import RockstarCatalog
 
 from scipy.ndimage import convolve
 
@@ -311,7 +312,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
                 N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1, nproc=1, 
-                catmode="galaxy", pooling="mean", savename=None):
+                catmode="galaxy", pooling="mean", savename=None, finder="caesar"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -328,8 +329,10 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         the files themselves (e.g. snap_..._XYZ.hdf5) or to the directories
         holding the multi-file output (e.g. snapdir_XYZ).
     caesarpath: string
-        Path the the files outputed by caesar. This should hold your halo and 
-        galaxy catalogs.
+        Path the the files outputed by your finder. This should hold your halo and 
+        galaxy catalogs. In the case that your did `finder = "rockstar"`, then
+        this will automatically assume it to be a filebase for the RockstarCatalog
+        read.
     r_search: float
         (IN ckpc/h) the searching radius for the particles around a given
         absorber.
@@ -374,6 +377,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         method is the most memory-intensive. If pooling is "nearest" then it
         does not pool galaxies in a grid; instead it gets the coordinate of
         the center of the LLP grid and finds the closest galaxy.
+    finder: str{"caesar","rockstar"}, default="caesar"
+        Designate which halo/galaxy finding software you have used. Default
+        is using Caesar.
 
     Returns
     -------
@@ -431,7 +437,13 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             snapFile = yt.load(simFiles) # h5.File(simFiles[i], "r")
         else:
             snapFile = yt.load(simFiles, unit_base=unit_base, bounding_box=bbox)
-        haloFile = caesar.load(caesarFiles)
+
+        if finder=="caesar":
+            haloFile = caesar.load(caesarFiles)
+        elif finder=="rockstar":
+            haloFile = RockstarCatalog(filebase=caesarFiles)
+        else:
+            raise ValueError("Unknown string given in 'finder'")
 
         # Defining the cosmology and simulation size
         # DOING IT IN COMOVING
@@ -447,17 +459,23 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
 
         # Getting catalog information
         gasData = snapFile.all_data()
-        if catmode == "galaxy":
-            caesar_loader = haloFile.galaxies
-        elif catmode == "halo":
-            caesar_loader = haloFile.halos
-        else:
-            raise ValueError("Argument 'catmode' contains an invalid value. Must be either 'galaxy' or 'halo'")
+        if finder=="caesar":
+            if catmode == "galaxy":
+                caesar_loader = haloFile.galaxies
+            elif catmode == "halo":
+                caesar_loader = haloFile.halos
+            else:
+                raise ValueError("Argument 'catmode' contains an invalid value. Must be either 'galaxy' or 'halo'")
 
-        # Getting galaxy/halo IDs in caesar
-        galID = np.asarray([i.GroupID for i in caesar_loader])
-        # And positions, in box length units
-        galPos = np.asarray([i.pos.to("kpccm/h").value for i in caesar_loader])
+            # Getting galaxy/halo IDs in caesar
+            galID = np.asarray([i.GroupID for i in caesar_loader])
+            # And positions, in box length units
+            galPos = np.asarray([i.pos.to("kpccm/h").value for i in caesar_loader])
+
+        elif finder=="rockstar":
+            catmode = "halo" # with ROCKSTAR, catmode must be in 'halo'
+            galID = haloFile.ids # IDs in ROCKSTAR
+            galPos = haloFile.pos.to("kpccm/h").value # positions in ROCKSTAR
 
         # This will hold all data of IDs for each sim snapshot
         colSpecies = []
