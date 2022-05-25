@@ -17,8 +17,8 @@ class RockstarCatalog():
             fname = filename
         with open(fname,"r") as f:
             s = []
-            for x in f:
-                
+            contents = f.read().split("\n")
+            for x in contents:
                 if "Om" in x and "Ol" in x and "h" in x:
                     line = np.array([i for i in re.findall(r'\w+\D',x) if not any((c in chars) for c in i)], dtype=str)
                     s = np.array(re.findall(r"[-+]?(?:\d*\.\d+|\d+)",x), dtype=str)
