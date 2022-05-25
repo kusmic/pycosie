@@ -1,3 +1,3 @@
-import .rockstar
+from .rockstar import *
 
-import .galfinder
+from .galfinder import *
