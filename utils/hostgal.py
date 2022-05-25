@@ -428,9 +428,12 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         else:
             globStr = simpath + "snap_*.hdf5"
         simFiles = glob.glob(globStr)[0]
-
-        globStr = caesarpath + f"caesar_{snapi:03}.hdf5"
-        caesarFiles = glob.glob(globStr)[0]
+        
+        if finder=="caesar":
+            globStr = caesarpath + f"caesar_{snapi:03}.hdf5"
+            caesarFiles = glob.glob(globStr)[0]
+        elif finder=="rockstar":
+            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"
             
         # Getting snapshot's cosmology and size
         if bbox == None or unit_base == None:
