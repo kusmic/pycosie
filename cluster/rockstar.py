@@ -48,14 +48,13 @@ class RockstarCatalog():
 
 
         Tab, self.units = self.read_rockstar(filebase=filebase, filename=filename, units=units)
-        print(Tab)
         self.ids = Tab["id"].value
         self.mvir = self.cosmo.arr(Tab["mvir"].value, self.units["mass"])
         self.rvir = self.cosmo.arr(Tab["rvir"].value, self.units["halo_dist_rad"])
         pos = np.array([Tab["x"].value,Tab["y"].value,Tab["z"].value]).T
         self.pos = self.cosmo.arr(pos, self.units["pos"])
         vel = np.array([Tab["vx"].value,Tab["vy"].value,Tab["vz"].value]).T
-        self.vel = self.cosmo.arr(pos, self.units["pos"])
+        self.vel = self.cosmo.arr(pos, self.units["vel"])
         
 
     def read_rockstar(self, filename=None, filebase=None, units=None):
