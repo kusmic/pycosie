@@ -20,10 +20,10 @@ setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU Punlic License v2.0",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Operating System :: OS Independent",
     ],
-    license="GNU Public License v2.0",
+    license="GNU General Public License v2 (GPLv2)",
     install_requires=[
         "numpy",
         "scipy",
@@ -31,6 +31,5 @@ setup(
         "caesar",
         "astropy",
         "h5py"
-    ],
-    dependency_links=["https://github.com/dnarayanan/caesar/tarball/master#egg=caesar-0.2"]
+    ]
 )
