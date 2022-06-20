@@ -9,9 +9,9 @@ Most of these can be either `pip` or `conda` installed directly. For example:
 conda install h5py numpy scipy astropy
 ```
 
-For `yt`, they have specific installations available on their [website](https://yt-project.org/), but it is recommended to use the `conda` installation:
+For `yt>=4.0.1`, they have specific installations available on their [website](https://yt-project.org/), but it is recommended to use the `pip` installation:
 ```
-conda install yt -c conda-forge
+pip install yt
 ```
 
 For `caesar`, you can find the necessary files and their documentation [at their GitHub](https://github.com/dnarayanan/caesar), which includes how to install. As of our knowledge, you can use the `setup.py` available:

@@ -27,7 +27,7 @@ setup(
     install_requires=[
         "numpy",
         "scipy",
-        "yt",
+	"yt==4.0.1",
         "caesar",
         "astropy",
         "h5py"
