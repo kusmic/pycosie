@@ -42,7 +42,7 @@ class SkidCatalog():
                 self.gas_mass = gasMass * massUnit
                 self.stellar_mass = stlMass * massUnit
                 self.pos = pos * L
-                self.ids = ID
+                self.ids = ID.astype(int)
 
 
 	
