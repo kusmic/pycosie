@@ -11,7 +11,7 @@ class SkidCatalog():
         Object to hold the mass and position of galaxy groups found in SKID
         """
         
-        def __init__(self, statname, snapname):
+        def __init__(self, statname, snapname, unit_base=None, bounding_box=None):
                 """
                 For this catalog defaults, masses are in Msun and position is ckpc/h.
                 
@@ -20,8 +20,12 @@ class SkidCatalog():
                 snapname: str
                     The name of the snapshot used for SKID analysis. Use 0th file
                     if multifile output.
+                unit_base: dict
+                    Units for yt as it loads snapshot, same as the `unit_base` there.
+                bounding_box:
+                    Box bounds for yt to load snapshot, same as `bounding_box` there.
                 """
-                ds = yt.load(snapname)
+                ds = yt.load(snapname, unit_base=unit_base, bounding_box=bounding_box)
                 H0 = ds.hubble_constant * 100. * u.km / u.Mpc / u.s
                 co = Cosmology(omega_lambda=ds.omega_lambda,
                                omega_matter=ds.omega_matter,
