@@ -10,6 +10,7 @@ import sys
 import time
 from datetime import datetime
 from pycosie.cluster.rockstar import RockstarCatalog
+from pycosie.cluster.skid import SkidCatalog
 
 from scipy.ndimage import convolve
 
@@ -95,7 +96,7 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, N_LLP, pooling, f=None):
+             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, f=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -160,6 +161,10 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         Grid width of last launch position grid
     pooling: int, str
         From do_hostgal, the galaxy pooling method. Check if "nearest"
+    smoothlengthArr: numpy.ndarray
+        Array of gas smoothing lengths
+    SLfactor: float
+        Multiplying factor to smoothing length to convert to search radius
     f: File, default=None
         File stream for debug mode. Defaults to None if not debug mode.
 
@@ -179,6 +184,10 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         # rint(f"..... {percent:.3f}% launched particles processed", end="\r")
         pos = gasCoordArr[gi] # This is in box units
         # percent = (gi+1)
+        if r_search!="smooth":
+            r_s = r_search / lbox.to("kpccm/h").value[0]                                                     
+        else:
+            r_s = smoothLengthArr * SLfactor / lbox.to("kpccm/h").value[0]
         for ioni, ion in enumerate(ion_lines):
             sysID = vpmDict[ion]["ID"]
             sysVel = vpmDict[ion]["v"] # getting absorber ID and velocity
@@ -197,7 +206,10 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                 zSys -= np.floor(zSys) # converting them all to box space
 
                 # ADD check if x, y, z already larger than r_search
-                r_s = r_search / lbox.to("kpccm/h").value[0]
+                if r_search!="smooth":
+                    r_s = r_search / lbox.to("kpccm/h").value[0]
+                else:
+                    r_s = smoothLengthArr * SLfactor / lbox.to("kpccm/h").value[0]
                 #if xSys > r_s or ySys > r_s or zSys > r_s:
                 #    continue
                 
@@ -310,9 +322,9 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                     # print(ion, gasIDs[gi], sysID[vi], galOfLLP)
 
 
-def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=None, n_i=0, n_f=None, merged=True,
-                N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1, nproc=1, 
-                catmode="galaxy", pooling="mean", savename=None, finder="caesar"):
+def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0, bbox=None, unit_base=None, n_i=0,
+                n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1,
+                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar"):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -333,9 +345,15 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         galaxy catalogs. In the case that your did `finder = "rockstar"`, then
         this will automatically assume it to be a filebase for the RockstarCatalog
         read.
-    r_search: float
-        (IN ckpc/h) the searching radius for the particles around a given
-        absorber.
+    r_search: float, or "smooth"
+        The searching radius for the particles around a given
+        absorber. can be wither a number (in ckpc/h) or if "smooth" it
+        takes the 'SmoothingLength' data for each particle and the
+        smoothing length factor.
+    smoothlength_factor: float, default=1.0
+        Smoothing length factor to multiply into to get search radius based on each
+        gas particle's 'SmoothingLength' times this factor. Default is 1.0, so only
+        using smoothing length.
     bbox: array-like
         Holds the upper and lower limit of the bounds of the simulation
         box in (x,y,z)
@@ -377,9 +395,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         method is the most memory-intensive. If pooling is "nearest" then it
         does not pool galaxies in a grid; instead it gets the coordinate of
         the center of the LLP grid and finds the closest galaxy.
-    finder: str{"caesar","rockstar"}, default="caesar"
-        Designate which halo/galaxy finding software you have used. Default
-        is using Caesar.
+    finder: str{"caesar","rockstar","skid"}, default="caesar"
+        Designate which halo/galaxy finding software you have used based on what
+        we developed support for. Default is using Caesar.
 
     Returns
     -------
@@ -445,6 +463,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             haloFile = caesar.load(caesarFiles)
         elif finder=="rockstar":
             haloFile = RockstarCatalog(filebase=caesarFiles)
+        elif finder=="skid":
+            haloFile = SkidCatalog(caesarFiles, simFiles, unit_base=unit_base, bounding_box=bbox)
         else:
             raise ValueError("Unknown string given in 'finder'")
 
@@ -480,6 +500,11 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
             galID = haloFile.ids # IDs in ROCKSTAR
             galPos = haloFile.pos.to("kpccm/h").value # positions in ROCKSTAR
 
+        elif finder=="skid":
+            catmode="galaxy" # w/ SKID must be galaxy
+            galID = haloFile.ids # IDs in SKID stat file
+            galPos = haloFile.pos.to("kpccm/h").value # positions in SKID
+
         # This will hold all data of IDs for each sim snapshot
         colSpecies = []
         colGasID = []
@@ -490,14 +515,17 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         
         # now culling out particles to only analyze those that launched
         gasCoords_pre = gasData["PartType0", "Coordinates"].to("Mpccm/h").value / lbox.to("Mpccm/h").value[0]
+        # box units
         gasIDs_pre = gasData["PartType0","ParticleIDs"].value
-        
+        gasSL_pre = gasData["PartType0","SmoothingLength"].to("kpccm/h").value] # in ckpc/h
         # Getting only particles that have launched
         LLP_arr = np.asarray(gasData["PartType0","LastLaunchPos"].value, dtype=int)
         hasLaunched = LLP_arr != UINT_MAX
         gasCoords = gasCoords_pre[hasLaunched]
         gasIDs = gasIDs_pre[hasLaunched]
         LLPs = LLP_arr[hasLaunched]
+        gasSL = gasSL_pre[hasLaunched]
+        del gasCoords_pre, gasIDs_pre, gasSL_pre, LLP_arr
         # final arrays to analyze of gas ID, position, and LLPs after culling
 
         # Now reading each VPM(.MERGED) file
@@ -582,7 +610,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
                           colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
-                          gal_buffer, N_LLP, pooling, f)
+                          gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
+                          smoothlength_factor, f)
                 #argument to pass into __part__
 
                 # staring multiprocessing
@@ -652,6 +681,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, bbox=None, unit_base=Non
         if write: # if you want to write it out
             if savename == None:
                 fname = f"refTab_r{r_search}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
+                if r_search=="smooth":
+                    fname = f"refTab_rSL{smoothlength_factor}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
             else:
                 fname = savename
             __save_hdf5__(refTable, fname, catmode)
