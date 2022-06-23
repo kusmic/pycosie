@@ -11,7 +11,7 @@ class SkidCatalog():
         Object to hold the mass and position of galaxy groups found in SKID
         """
         
-        def __init__(self, statname, snapname==None, unit_base=None, bounding_box=None, cosmo=None, L=None):
+        def __init__(self, statname, snapname=None, unit_base=None, bounding_box=None, cosmo=None, L=None):
                 """
                 For this catalog defaults, masses are in Msun and position is ckpc/h.
                 

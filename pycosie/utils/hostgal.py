@@ -209,7 +209,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                 if r_search!="smooth":
                     r_s = r_search / lbox.to("kpccm/h").value[0]
                 else:
-                    r_s = smoothLengthArr * SLfactor / lbox.to("kpccm/h").value[0]
+                    r_s = smoothLengthArr[gi] * SLfactor / lbox.to("kpccm/h").value[0]
                 #if xSys > r_s or ySys > r_s or zSys > r_s:
                 #    continue
                 
