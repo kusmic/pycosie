@@ -1,5 +1,5 @@
 # pycosie
-pycosie (pie cozy) is a complimentary suite of analyses software written in Python meant to be analyzed on Technicolor Dawn and quasarcosie outputs. It is the Python derivative of ARCOSIE.
+pycosie (pie cozy) is a complimentary suite of analyses software written in Python meant to be analyzed on Technicolor Dawn and quasarcosie outputs. It is the Python support package of ARCOSIE.
 
 ### Dependencies
 The dependencies include: numpy, scipy, yt, caesar, astropy, and h5py.
@@ -33,3 +33,7 @@ Otherwise, one can use pip:
 ```
 pip install pycosie
 ```
+HOWEVER, due to how quickly this software is updated and bugs arise and get squashed, I recommend using the
+first option.
+
+### Latest Notes
