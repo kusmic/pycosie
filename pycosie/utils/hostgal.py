@@ -517,7 +517,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         gasCoords_pre = gasData["PartType0", "Coordinates"].to("Mpccm/h").value / lbox.to("Mpccm/h").value[0]
         # box units
         gasIDs_pre = gasData["PartType0","ParticleIDs"].value
-        gasSL_pre = gasData["PartType0","SmoothingLength"].to("kpccm/h").value] # in ckpc/h
+        gasSL_pre = gasData["PartType0","SmoothingLength"].to("kpccm/h").value # in ckpc/h
         # Getting only particles that have launched
         LLP_arr = np.asarray(gasData["PartType0","LastLaunchPos"].value, dtype=int)
         hasLaunched = LLP_arr != UINT_MAX

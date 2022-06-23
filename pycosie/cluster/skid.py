@@ -11,7 +11,7 @@ class SkidCatalog():
         Object to hold the mass and position of galaxy groups found in SKID
         """
         
-        def __init__(self, statname, snapname, unit_base=None, bounding_box=None):
+        def __init__(self, statname, snapname==None, unit_base=None, bounding_box=None, cosmo=None, L=None):
                 """
                 For this catalog defaults, masses are in Msun and position is ckpc/h.
                 
@@ -22,22 +22,48 @@ class SkidCatalog():
                     if multifile output.
                 unit_base: dict
                     Units for yt as it loads snapshot, same as the `unit_base` there.
-                bounding_box:
+                bounding_box: array-like
                     Box bounds for yt to load snapshot, same as `bounding_box` there.
+                cosmo: yt.Cosmology
+                    The Cosmology object defining the parameters of the simulation the 
+                    catalog came from. This alongside L can be used instead of snapname.
+                L: float
+                    IN ckpc/h, the box length of the square simulation. Can be used 
+                    alongside cosmo instead of snapname
                 """
-                ds = yt.load(snapname, unit_base=unit_base, bounding_box=bounding_box)
-                H0 = ds.hubble_constant * 100. * u.km / u.Mpc / u.s
-                co = Cosmology(omega_lambda=ds.omega_lambda,
-                               omega_matter=ds.omega_matter,
-	                       omega_radiation=0,
-	                       omega_curvature=0,
-	                       hubble_constant=ds.hubble_constant)
+                # Check that only using snapname OR cosmo and L EXCLUSIVELY
+                # Then creating units for each case
+                if snapname==None:
+                        if cosmo==None or L==None:
+                                raise ValueError("Undefined parameters. Please either provide snapname (path to snapshot or yt.Dataset) OR cosmo and L")
+                        else:
+                                H0 = cosmo.hubble_constant * 100. * u.km / u.Mpc / u.s
+                                rho_c = 3 * H0**2 / (8 * np.pi * c.G)
+                                rho_c = rho_c.to(u.g/u.cm**3)
+                                L = cosmo.arr(L, "kpccm/h")
+                                volSim = L.to("cmcm")**3
+                                massUnit = cosmo.arr(rho_c.value * volSim.value, "g").to("Msun")
+                                
+                if snapname!=None:
+                        if cosmo!=None or L!=None:
+                                raise RuntimeError("Ambiguous definition. Please define snapname OR cosmo and L, but not all three.")
+                        else:
+                                if type(snapname)==str:
+                                        ds = yt.load(snapname, unit_base=unit_base, bounding_box=bounding_box)
+                                else:
+                                        ds = snapname
+                                H0 = ds.hubble_constant * 100. * u.km / u.Mpc / u.s
+                                co = Cosmology(omega_lambda=ds.omega_lambda,
+                                               omega_matter=ds.omega_matter,
+	                                       omega_radiation=0,
+	                                       omega_curvature=0,
+	                                       hubble_constant=ds.hubble_constant)
                 
-                rho_c = 3* H0**2 / (8 * np.pi * c.G)
-                rho_c = rho_c.to(u.g / u.cm**3)
-                L = ds.domain_width.to("kpccm/h")[0]
-                volSim = L.to("cm")**3
-                massUnit = co.arr(rho_c.value * volSim.value, "g").to("Msun")
+                                rho_c = 3* H0**2 / (8 * np.pi * c.G)
+                                rho_c = rho_c.to(u.g / u.cm**3)
+                                L = ds.domain_width.to("kpccm/h")[0]
+                                volSim = L.to("cmcm")**3
+                                massUnit = co.arr(rho_c.value * volSim.value, "g").to("Msun")
                 
                 ID, totMass, gasMass, stlMass, x, y, z = np.loadtxt(statname, usecols=(0,2,3,4,12,13,14),
                                                                     unpack=True)
