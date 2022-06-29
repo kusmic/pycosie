@@ -35,7 +35,7 @@ class SkidCatalog():
                 # Then creating units for each case
                 if snapname==None:
                         if cosmo==None or L==None:
-                                raise ValueError("Undefined parameters. Please either provide snapname (path to snapshot or yt.Dataset) OR cosmo and L")
+                                raise ValueError("Undefined parameters. Please either provide snapname (path to snapshot or yt Dataset) OR cosmo and L")
                         else:
                                 H0 = cosmo.hubble_constant * 100. * u.km / u.Mpc / u.s
                                 rho_c = 3 * H0**2 / (8 * np.pi * c.G)
@@ -65,8 +65,7 @@ class SkidCatalog():
                                 volSim = L.to("cmcm")**3
                                 massUnit = co.arr(rho_c.value * volSim.value, "g").to("Msun")
                 
-                ID, totMass, gasMass, stlMass, x, y, z = np.loadtxt(statname, usecols=(0,2,3,4,12,13,14),
-                                                                    unpack=True)
+                ID, npart, totMass, gasMass, stlMass, vcmax, hvc, ovc, rmvc, rhm, outr, dv, x, y, z, vx, vy, vz, xb, yb, zb = np.loadtxt(statname, unpack=True)
                 pos = np.asarray([x, y, z]).T + 0.5
                 self.total_mass = totMass * massUnit
                 self.gas_mass = gasMass * massUnit

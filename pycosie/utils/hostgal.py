@@ -446,18 +446,30 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         else:
             globStr = simpath + "snap_*.hdf5"
         simFiles = glob.glob(globStr)[0]
-        
-        if finder=="caesar":
-            globStr = caesarpath + f"caesar_{snapi:03}.hdf5"
-            caesarFiles = glob.glob(globStr)[0]
-        elif finder=="rockstar":
-            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"
             
         # Getting snapshot's cosmology and size
         if bbox == None or unit_base == None:
             snapFile = yt.load(simFiles) # h5.File(simFiles[i], "r")
         else:
             snapFile = yt.load(simFiles, unit_base=unit_base, bounding_box=bbox)
+
+        # Defining the cosmology and simulation size                                                                 
+        # DOING IT IN COMOVING                                                                                       
+        lbox = snapFile.domain_width.to("kpccm/h")# box size in ckpc/h                                              
+        h = snapFile.hubble_constant # Hubble parameter                                                             
+        OmegaM = snapFile.omega_matter # fraction of matter now                                                     
+        OmegaL = snapFile.omega_lambda # fraction of dark energy now                                                
+        z = snapFile.current_redshift # redshift of snapshot 
+
+        if finder=="caesar":                                                                                        
+            globStr = caesarpath + f"caesar_{snapi:03}.hdf5"                                                        
+            caesarFiles = glob.glob(globStr)[0]                                                                     
+        elif finder=="rockstar":                                                                                    
+            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"                                                  
+        elif finder=="skid":                                                                                        
+            caesarFiles = caesarpath + f"gal_z{z:.5f}.stat"
+            if not os.path.isfile(caesarFiles):
+                raise RuntimeError(f"Catalog file not found: {caesarFiles}")
 
         if finder=="caesar":
             haloFile = caesar.load(caesarFiles)
@@ -680,9 +692,13 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         
         if write: # if you want to write it out
             if savename == None:
-                fname = f"refTab_r{r_search}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
+                if pooling == "nearest":
+                    buf = "Near"
+                else:
+                    buf = gal_buffer
+                fname = f"refTab_r{r_search}_b{buf}_{snapi:03}_{catmode}.hdf5"
                 if r_search=="smooth":
-                    fname = f"refTab_rSL{smoothlength_factor}_b{gal_buffer}_{snapi:03}_{catmode}.hdf5"
+                    fname = f"refTab_rSL{smoothlength_factor}_b{buf}_{snapi:03}_{catmode}.hdf5"
             else:
                 fname = savename
             __save_hdf5__(refTable, fname, catmode)
