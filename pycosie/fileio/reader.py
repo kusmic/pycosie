@@ -9,7 +9,7 @@ class VPM():
             content = f.read().split("\n")
             x = content[1].split(" ")
             self.line = x[0]
-        ids, colDens, vm, absWidth, colDensUnc, absWidthUnc, min1, EW, EWUnc= np.loadtxt(sys_abs, skiprows=2, unpack=True)
+        ids, colDens, vm, absWidth, colDensUnc, absWidthUnc, min1, EW, EWUnc= np.loadtxt(fname, skiprows=2, unpack=True)
         self.line_id = ids
         self.column_density = colDens * 1e13 / u.cm**2
         self.v_mean = vm * u.km / u.s
@@ -26,7 +26,7 @@ class VPM_Merged():
             content = f.read().split("\n")
             x = content[1].split(" ")
             self.line = x[0]
-        ids, colDens, vm, absWidth, EW, EWUnc= np.loadtxt(sys_abs, skiprows=2, unpack=True)
+        ids, colDens, vm, absWidth, EW, EWUnc= np.loadtxt(fname, skiprows=2, unpack=True)
         self.line_id = ids
         self.column_density = colDens * 1e13 / u.cm**2
         self.central_velocity = vm * u.km / u.s
@@ -38,8 +38,16 @@ class CLN():
 
     def __init__(self, fname):
         self.line = fname[:-8]
-        lam, v, F, dF= np.loadtxt(sys_abs, skiprows=2, unpack=True)
+        lam, v, F, dF= np.loadtxt(fname, skiprows=2, unpack=True)
         self.wavelength = lam * u.Angstrom
         self.velocity = v * u.km / u.s
         self.norm_flux = F
         self.norm_flux_unc = dF
+
+class Loser():
+
+    def __init__(self, fname):
+        l_id, UVmag = np.loadtxt(fname, unpack=True, usecols=(0,41))
+        self.ids = l_id.astype(int)
+        self.UV_mag = UVmag
+

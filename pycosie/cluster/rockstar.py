@@ -55,6 +55,8 @@ class RockstarCatalog():
         self.pos = self.cosmo.arr(pos, self.units["pos"])
         vel = np.array([Tab["vx"].value,Tab["vy"].value,Tab["vz"].value]).T
         self.vel = self.cosmo.arr(pos, self.units["vel"])
+        self.pos_uncertainty = self.cosmo.arr(Tab["PosUncertainty"], self.units["pos"])
+        self.vel_uncertainty = self.cosmo.arr(Tab["VelUncertainty"], self.units["vel"])
         
 
     def read_rockstar(self, filename=None, filebase=None, units=None):

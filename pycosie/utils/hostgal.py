@@ -96,7 +96,7 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, f=None):
+             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -188,9 +188,9 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
             r_s = r_search / lbox.to("kpccm/h").value[0]                                                     
         else:
             r_s = smoothLengthArr * SLfactor / lbox.to("kpccm/h").value[0]
-        for ioni, ion in enumerate(ion_lines):
+        for ioni, ion in enumerate(ion_i_lines):
             sysID = vpmDict[ion]["ID"]
-            sysVel = vpmDict[ion]["v"] # getting absorber ID and velocity
+            sysVel = vpmDict[ion]["v"]
             for vi, v in enumerate(sysVel):
                 xStart, yStart, zStart = 0., 0., 0.
                 dSys = (v / Hz) * (1+z) * h # comoving h-1 Mpc
@@ -306,7 +306,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                             dz = np.abs(galp[2]-z_llp)
                             if dz > 0.5: # box units
                                 dz = 1 - dz
-                            r = np.sqrt( np.power([dx,dy,dz],2).sum() )
+                            r = np.sqrt( dx**2 + dy**2 + dz**2 )
                             r_arr.append(r)
                             gali_arr.append(gali)
                         closest_gal = np.argmin(r_arr)
@@ -452,24 +452,36 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
             snapFile = yt.load(simFiles) # h5.File(simFiles[i], "r")
         else:
             snapFile = yt.load(simFiles, unit_base=unit_base, bounding_box=bbox)
-
-        # Defining the cosmology and simulation size                                                                 
-        # DOING IT IN COMOVING                                                                                       
-        lbox = snapFile.domain_width.to("kpccm/h")# box size in ckpc/h                                              
-        h = snapFile.hubble_constant # Hubble parameter                                                             
-        OmegaM = snapFile.omega_matter # fraction of matter now                                                     
-        OmegaL = snapFile.omega_lambda # fraction of dark energy now                                                
-        z = snapFile.current_redshift # redshift of snapshot 
-
-        if finder=="caesar":                                                                                        
-            globStr = caesarpath + f"caesar_{snapi:03}.hdf5"                                                        
-            caesarFiles = glob.glob(globStr)[0]                                                                     
-        elif finder=="rockstar":                                                                                    
-            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"                                                  
-        elif finder=="skid":                                                                                        
-            caesarFiles = caesarpath + f"gal_z{z:.5f}.stat"
-            if not os.path.isfile(caesarFiles):
-                raise RuntimeError(f"Catalog file not found: {caesarFiles}")
+            
+        # Defining the cosmology and simulation size                      
+        # DOING IT IN COMOVING                                                 
+        lbox = snapFile.domain_width.to("kpccm/h")# box size in ckpc/h           
+        h = snapFile.hubble_constant # Hubble parameter                      
+        OmegaM = snapFile.omega_matter # fraction of matter now                 
+        OmegaL = snapFile.omega_lambda # fraction of dark energy now      
+        z = snapFile.current_redshift # redshift of current snap
+        if finder=="caesar":          
+            globStr = caesarpath + f"caesar_{snapi:03}.hdf5" 
+            caesarFiles = glob.glob(globStr)[0] 
+        elif finder=="rockstar":     
+            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"
+            
+        elif finder=="skid":
+            #if ( np.round(z,0) >= np.round(z,5) ):
+            #    caesarFiles = caesarpath + f"gal_z{z:.0f}.stat"
+            #elif ( np.round(z,1) == np.round(z,5) ):
+            #    caesarFiles = caesarpath + f"gal_z{z:.1f}.stat"
+            #elif ( np.round(z,2) == np.round(z,5) ):
+            #    caesarFiles = caesarpath + f"gal_z{z:.2f}.stat"
+            #elif ( np.round(z,3) == np.round(z,5) ):
+            #    caesarFiles = caesarpath + f"gal_z{z:.3f}.stat"
+            #elif ( np.round(z,4) == np.round(z,5) ):
+            #    caesarFiles = caesarpath + f"gal_z{z:.4f}.stat"
+            #else:
+            #    caesarFiles = caesarpath + f"gal_z{z:.5f}.stat"
+            #if not os.path.isfile(caesarFiles):
+            #    raise RuntimeError(f"Catalog file not found: {caesarFiles}")
+            caesarFiles = caesarpath + f"gal_{snapi:03}.stat"
 
         if finder=="caesar":
             haloFile = caesar.load(caesarFiles)
@@ -543,14 +555,23 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         # Now reading each VPM(.MERGED) file
         vpmOut = dict()
         # Will read in all species, create single referenced dictionary
+        ion_i_lines = []
+        if len(vpmFiles) == 0:
+            raise RuntimeError("No VPM files found, check if correct directory is given.")
         for sys_abs in vpmFiles:
+            isEmpty = False
             speciesName = "."
             for ionName in ion_lines:
                 if ionName in sys_abs:
                     speciesName = ionName
                     break
-            sysID, sysVel = np.loadtxt(sys_abs, skiprows=2, usecols=(0,2), unpack=True)
-            vpmOut[speciesName] = { "v":sysVel, "ID":sysID }
+            try:
+                sysID, sysVel = np.loadtxt(sys_abs, skiprows=2, usecols=(0,2), unpack=True)
+                vpmOut[speciesName] = { "v":sysVel, "ID":sysID }
+            except ValueError:
+                isEmpty = True
+            if not isEmpty:
+                ion_i_lines.append(speciesName)
         
         
         colSpecArr = []
@@ -623,7 +644,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
                           gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
-                          smoothlength_factor, f)
+                          smoothlength_factor, ion_i_lines, f)
                 #argument to pass into __part__
 
                 # staring multiprocessing

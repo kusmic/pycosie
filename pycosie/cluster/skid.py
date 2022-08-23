@@ -72,6 +72,10 @@ class SkidCatalog():
                 self.stellar_mass = stlMass * massUnit
                 self.pos = pos * L
                 self.ids = ID.astype(int)
+                #print(x)
+                #print(y)
+                #print(z)
+                #print(self.pos)
 
 
 	
