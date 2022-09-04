@@ -578,8 +578,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                     except ValueError:
                         isEmpty = True
                         vpmOut[speciesName] = { "v":None, "ID":None}
-                if not isEmpty:
-                    ion_i_lines.append(speciesName)
+                    if not isEmpty:
+                        ion_i_lines.append(speciesName)
+                    break
         
         
         colSpecArr = []
