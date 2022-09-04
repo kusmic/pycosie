@@ -473,8 +473,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         if finder=="caesar":          
             globStr = caesarpath + f"caesar_{snapi:03}.hdf5" 
             caesarFiles = glob.glob(globStr)[0] 
-        elif finder=="rockstar":     
-            caesarFiles = caesarpath + f"halos_{snapi:03}.*.ascii"
+        elif finder=="rockstar":
+            globStr = caesarpath + f"halos_{snapi:03}.*.ascii"
+            caesarFiles = glob.glob(globStr)[0]
             
         elif finder=="skid":
             #if ( np.round(z,0) >= np.round(z,5) ):
