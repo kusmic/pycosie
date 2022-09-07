@@ -73,7 +73,7 @@ def __save_hdf5__(table, fname, catmode, ion_i_lines):
             ion_copy = np.delete(ion_copy, idxIon)
             specieslist.attrs[ion] = ioni
         if ion_copy.size > 0:
-            for ioni, ion in enumerate(ion_i_lines):
+            for ioni, ion in enumerate(ion_copy):
                 specieslist.attrs[ion] = -999
     print(f"\n\nSaved output to {fname}.")
 
