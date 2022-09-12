@@ -334,7 +334,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0, bbox=None, unit_base=None, n_i=0,
                 n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1,
-                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar"):
+                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -408,6 +408,8 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
     finder: str{"caesar","rockstar","skid"}, default="caesar"
         Designate which halo/galaxy finding software you have used based on what
         we developed support for. Default is using Caesar.
+    print_progress: bool, default=True
+        Turn off or on a text progress indicator for each snapshot. Default is on.
 
     Returns
     -------
@@ -671,12 +673,14 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                 while True:
                     if procsArr[i].is_alive(): # if this Process is working
                         #global counter
-                        __print_complete(counter,N)
+                        if print_progress:
+                            __print_complete(counter,N)
                         time.sleep(1)
                         continue # stay with it
                     else: # if it's finished
                         #global counter
-                        __print_complete(counter,N)
+                        if print_progress:
+                            __print_complete(counter,N)
                         break # go to the next
         else: # if non-reasonable number given to nproc
             raise RuntimeError("ISSUE: Need nproc >= 1!")
