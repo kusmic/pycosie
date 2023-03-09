@@ -45,19 +45,28 @@ class SkidCatalog():
                         L = ds.domain_width.to("kpccm/h")[0]
                         volSim = L.to("cmcm")**3
                         massUnit = ds.arr(rho_c.value * volSim.value, "g").to("Msun")
+                        uL = L.to("Mpccm")
+                        cmPerMpc = 3.0855e24 u.cm / u.Mpc
+                        cmPerKm = 1e5 u.cm / u.km
+                        uT = np.sqrt(8 * np.pi/3) * cmPerMpc * (1/ (H0 * cmPerKm) )
+                        unitVel = (uL/uT).decompose()
+                        print("unitVel", unitVel)
+                        a = 1/(1 + ds.current_redhsift)
+                        conv
                 
                 ID, npart, totMass, gasMass, stlMass, vcmax, hvc, ovc, rmvc, rhm, outr, dv, x, y, z, vx, vy, vz, xb, yb, zb = np.loadtxt(statname, unpack=True)
                 pos = np.asarray([x, y, z]).T + 0.5
+                velocity = np.asarray([vx, vy, vz])
                 self.total_mass = totMass * massUnit
                 self.gas_mass = gasMass * massUnit
                 self.stellar_mass = stlMass * massUnit
                 self.pos = pos * L
                 self.ids = ID.astype(int)
-                #print(x)
-                #print(y)
-                #print(z)
-                #print(self.pos)
-
+                self.velocity = ds.arr(velocity * unitVel.value * np.sqrt(a), "cm/s")
+                self.nParticle = int(npart)
+                self.vcmax = ds.arr(vcmax * unitVel * a, "cm/s") # maybe FIXME
+                self.hvc = ds.arr(hvc * unitVel * a, "cm/s") # maybe FIXME
+                self.dv = ds.arr(dv * unitVel * a, "cm/s") # maybe FIXME
 
 	
 
