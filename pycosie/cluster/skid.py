@@ -49,7 +49,7 @@ class SkidCatalog():
                         cmPerMpc = 3.0855e24 * u.cm / u.Mpc
                         cmPerKm = 1e5 * u.cm / u.km
                         uT = np.sqrt(8 * np.pi/3) * cmPerMpc * (1/ (H0 * cmPerKm) )
-                        unitVel = (uL/uT).decompose()
+                        unitVel = (uL/uT).decompose().to(u.cm/u.s)
                         print("unitVel", unitVel)
                         a = 1/(1 + ds.current_redshift)
                         conv
