@@ -55,7 +55,7 @@ class SkidCatalog():
                 
                 ID, npart, totMass, gasMass, stlMass, vcmax, hvc, ovc, rmvc, rhm, outr, dv, x, y, z, vx, vy, vz, xb, yb, zb = np.loadtxt(statname, unpack=True)
                 pos = np.asarray([x, y, z]).T + 0.5
-                velocity = np.asarray([vx, vy, vz])
+                velocity = np.asarray([vx, vy, vz]).T
                 self.total_mass = totMass * massUnit
                 self.gas_mass = gasMass * massUnit
                 self.stellar_mass = stlMass * massUnit
