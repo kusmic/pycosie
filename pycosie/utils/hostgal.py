@@ -103,7 +103,7 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None):
+             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -174,6 +174,9 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         Multiplying factor to smoothing length to convert to search radius
     f: File, default=None
         File stream for debug mode. Defaults to None if not debug mode.
+    gaussian: bool, default=True
+        Whether to consider a Gaussian kernel for smoothing used in quasarcosie. 
+        Usually, it is.
 
     Returns
     -------
@@ -191,6 +194,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         # rint(f"..... {percent:.3f}% launched particles processed", end="\r")
         pos = gasCoordArr[gi] # This is in box units
         # percent = (gi+1)
+        if gaussian == True:
+            SLfactor *= 0.707107
         if r_search!="smooth":
             r_s = r_search / lbox.to("kpccm/h").value[0]                                                     
         else:
