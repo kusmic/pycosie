@@ -50,7 +50,7 @@ class SkidCatalog():
                         cmPerKm = 1e5 * u.cm / u.km
                         uT = np.sqrt(8 * np.pi/3) * cmPerMpc * (1/ (H0 * cmPerKm) )
                         unitVel = (uL/uT).decompose().to(u.cm/u.s)
-                        print("unitVel", unitVel)
+                        #print("unitVel", unitVel)
                         a = 1/(1 + ds.current_redshift)
                 
                 ID, npart, totMass, gasMass, stlMass, vcmax, hvc, ovc, rmvc, rhm, outr, dv, x, y, z, vx, vy, vz, xb, yb, zb = np.loadtxt(statname, unpack=True)
