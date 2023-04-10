@@ -339,7 +339,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0, bbox=None, unit_base=None, n_i=0,
                 n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1,
-                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True):
+                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True, gaussian=True):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -658,14 +658,14 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                 # def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
                 #            colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
                 #            Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-                #            gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None):
+                #            gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True):
                 argTup = (gasIDs[ni[i]:ni[i+1]], gasCoords[ni[i]:ni[i+1]], 
                           LLPs[ni[i]:ni[i+1]], vpmOut, galPos, galID, 
                           colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
                           gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
-                          smoothlength_factor, ion_i_lines, f)
+                          smoothlength_factor, ion_i_lines, f, gaussian)
                 #argument to pass into __part__
 
                 # staring multiprocessing
