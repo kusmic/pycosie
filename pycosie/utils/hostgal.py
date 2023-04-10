@@ -194,8 +194,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         # rint(f"..... {percent:.3f}% launched particles processed", end="\r")
         pos = gasCoordArr[gi] # This is in box units
         # percent = (gi+1)
-        if gaussian == True:
-            SLfactor *= 0.33479
+        if gaussian:
+            SLfactor = SLfactor * 0.33479
         if r_search!="smooth":
             r_s = r_search / lbox.to("kpccm/h").value[0]                                                     
         else:
