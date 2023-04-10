@@ -415,6 +415,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         we developed support for. Default is using Caesar.
     print_progress: bool, default=True
         Turn off or on a text progress indicator for each snapshot. Default is on.
+    gaussian: bool, default=True
+        Whether to convert smoothing kernel to a Gaussian. This changes the factor
+        of the smoothing length.
 
     Returns
     -------
