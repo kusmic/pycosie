@@ -677,7 +677,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                 #            rewind=False, galLLTArr=None, cosmo=False):
                 if rewind:
                     LLTArg = LLTs[ni[i]:ni[i+1]]
-                    galVel = haloFile.velocity.to["kpccm/h/s"].value
+                    galVel = haloFile.velocity.to("kpccm/h/s").value
                 else:
                     LLTArg = None
                     galVel = None
