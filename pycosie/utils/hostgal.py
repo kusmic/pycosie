@@ -409,7 +409,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
     catmode: str{"galaxy","halo"}, default="galaxy"
         Designates whether to get the positions and IDs of galaxies or halos,
         Default is for galaxies. Error if neither selected.
-    pooling: int, str{"mean","convolve"}, default="mean"
+    pooling: int, str{"mean","convolve", "nearest"}, default="mean"
         Designates the pooling method to find how many elements to store in
         in Halo IDs/Galaxy IDs. If an integer, it will create that number
         of elements. If "mean" then it will determine from mean number
