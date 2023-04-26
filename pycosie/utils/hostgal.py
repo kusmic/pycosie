@@ -103,7 +103,8 @@ def __print_complete(counter, N):
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True):
+             gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True,
+             rewind=False, gasLLTArr=None, ytds=None, galVelArr=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -240,6 +241,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                     if int(LLP) == UINT_MAX:
                         continue
                     # LLP grid indices calculated
+                    if rewind:
+                        LLT = gasLLTArr[gi]
                     igas = int( LLP/(N_LLP**2) )
                     jgas = int( (LLP - igas*N_LLP**2)/N_LLP )
                     kgas = int( LLP - (igas*N_LLP+jgas)*N_LLP )
@@ -272,6 +275,10 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
                         for gali, galpos in enumerate(galPosArr): # should be in ckpc/h
                         
                             # Now checking for galaxies that are in the grid cells
+                            if rewind:
+                                t_LLT = ytds.cosmology.t_from_a(gasLLT[i]).to("s").value
+                                dt = ytds.current_time.to("s").value - t_LLT
+                                galpos = galpos - (galVelArr[gali] * dt)
                             galp = galpos / lbox.to("kpccm/h").value #CHECKME if outputs still bad can have bad units here
 
                             if xmin_ind < 0: # negative index
@@ -339,7 +346,8 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0, bbox=None, unit_base=None, n_i=0,
                 n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1,
-                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True, gaussian=True):
+                nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True, gaussian=True,
+                rewind=False):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -564,6 +572,10 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         gasCoords = gasCoords_pre[hasLaunched]
         gasIDs = gasIDs_pre[hasLaunched]
         LLPs = LLP_arr[hasLaunched]
+        if rewind:
+            LLT_arr = gasData["PartType0","LastLaunchPos"].value
+            LLTs = LLT_arr[hasLaunched]
+            del LLT_arr
         gasSL = gasSL_pre[hasLaunched]
         del gasCoords_pre, gasIDs_pre, gasSL_pre, LLP_arr
         # final arrays to analyze of gas ID, position, and LLPs after culling
@@ -661,14 +673,22 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                 # def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
                 #            colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
                 #            Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
-                #            gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True):
+                #            gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True
+                #            rewind=False, galLLTArr=None, cosmo=False):
+                if rewind:
+                    LLTArg = LLTs[ni[i]:ni[i+1]]
+                    galVel = haloFile.velocity.to["kpccm/h/s"].value
+                else:
+                    LLTArg = None
+                    galVel = None
                 argTup = (gasIDs[ni[i]:ni[i+1]], gasCoords[ni[i]:ni[i+1]], 
                           LLPs[ni[i]:ni[i+1]], vpmOut, galPos, galID, 
                           colSpecArr[i], colGasIDArr[i], colAbsIDArr[i], 
                           colGalIDArr[i], __debugMode__, N, z, Hz, h, DXDZ, 
                           DYDZ, r_search, lbox, counter, maxCountGal, 
                           gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
-                          smoothlength_factor, ion_i_lines, f, gaussian)
+                          smoothlength_factor, ion_i_lines, f, gaussian, rewind, 
+                          LLTArg, snapFile, galVel)
                 #argument to pass into __part__
 
                 # staring multiprocessing
