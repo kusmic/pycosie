@@ -2,7 +2,7 @@ import numpy as np
 import h5py as h5
 import glob
 import yt
-import caesar
+#import caesar
 from astropy.table import Table
 import os
 import multiprocessing as mp
@@ -488,10 +488,10 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         OmegaM = snapFile.omega_matter # fraction of matter now                 
         OmegaL = snapFile.omega_lambda # fraction of dark energy now      
         z = snapFile.current_redshift # redshift of current snap
-        if finder=="caesar":          
-            globStr = caesarpath + f"caesar_{snapi:03}.hdf5" 
-            caesarFiles = glob.glob(globStr)[0] 
-        elif finder=="rockstar":
+        #if finder=="caesar":          
+        #    globStr = caesarpath + f"caesar_{snapi:03}.hdf5" 
+        #    caesarFiles = glob.glob(globStr)[0] 
+        if finder=="rockstar":
             globStr = caesarpath + f"halos_{snapi:03}.*.ascii"
             caesarFiles = glob.glob(globStr)[0]
             
@@ -512,9 +512,9 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
             #    raise RuntimeError(f"Catalog file not found: {caesarFiles}")
             caesarFiles = caesarpath + f"gal_{snapi:03}.stat"
 
-        if finder=="caesar":
-            haloFile = caesar.load(caesarFiles)
-        elif finder=="rockstar":
+        #if finder=="caesar":
+        #    haloFile = caesar.load(caesarFiles)
+        if finder=="rockstar":
             haloFile = RockstarCatalog(filebase=caesarFiles)
         elif finder=="skid":
             haloFile = SkidCatalog(caesarFiles, simFiles, unit_base=unit_base, bounding_box=bbox)
@@ -535,20 +535,20 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
 
         # Getting catalog information
         gasData = snapFile.all_data()
-        if finder=="caesar":
-            if catmode == "galaxy":
-                caesar_loader = haloFile.galaxies
-            elif catmode == "halo":
-                caesar_loader = haloFile.halos
-            else:
-                raise ValueError("Argument 'catmode' contains an invalid value. Must be either 'galaxy' or 'halo'")
+        #if finder=="caesar":
+        #    if catmode == "galaxy":
+        #        caesar_loader = haloFile.galaxies
+        #    elif catmode == "halo":
+        #        caesar_loader = haloFile.halos
+        #    else:
+        #        raise ValueError("Argument 'catmode' contains an invalid value. Must be either 'galaxy' or 'halo'")
 
             # Getting galaxy/halo IDs in caesar
-            galID = np.asarray([i.GroupID for i in caesar_loader])
+        #    galID = np.asarray([i.GroupID for i in caesar_loader])
             # And positions, in box length units
-            galPos = np.asarray([i.pos.to("kpccm/h").value for i in caesar_loader])
+        #    galPos = np.asarray([i.pos.to("kpccm/h").value for i in caesar_loader])
 
-        elif finder=="rockstar":
+        if finder=="rockstar":
             catmode = "halo" # with ROCKSTAR, catmode must be in 'halo'
             galID = haloFile.ids # IDs in ROCKSTAR
             galPos = haloFile.pos.to("kpccm/h").value # positions in ROCKSTAR

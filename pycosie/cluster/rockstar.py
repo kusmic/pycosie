@@ -1,10 +1,7 @@
 import numpy as np
-import caesar
-import yt
 from glob import glob
 from astropy.io import ascii
 from astropy import table as tab
-from unyt import unyt_array
 import re
 from yt.utilities.cosmology import Cosmology
 
