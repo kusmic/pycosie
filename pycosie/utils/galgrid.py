@@ -1,7 +1,7 @@
 import pyximport
 pyximport.install(setup_args={"script_args" : ["--verbose"]})
 
-from cgauss_smooth import recenter, gaussErf, gaussLoop
+from cgauss_smooth import recenter, gaussLoop
 
 import numpy as np
 from pycosie.cluster.skid import SkidCatalog
@@ -9,8 +9,9 @@ import yt
 import h5py as h5
 import astropy.units as u
 import astropy.constants as c
-from yt.utilities.cosmology import Cosmology
-from scipy.spatial.distance import pdist, squareform
+from scipy.interpolate import interp1d
+
+__star_f = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
 
 class GalaxyGrid():
     
@@ -18,7 +19,7 @@ class GalaxyGrid():
     #__gridGaussLoop = __gridGaussLoop
     #__gaussIntgErf = __gaussIntgErf
     
-    def __init__(self, id, dsSphere, ds, gridLength, metals=None):
+    def __init__(self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=__star_f):
         self.id = id
         self.metalDensityGrids = dict()
         # TD metallicities enumerated "Metallicity_0X"
@@ -67,7 +68,7 @@ class GalaxyGrid():
         
         __gPartSL = sp["PartType0","SmoothingLength"].to("kpccm/h").value #ckpc/h
         __gPartMass =  sp["PartType0","Masses"].to("Msun").value #Msol
-        __gPartZ = sp["PartType0","metallicity"].value # unitless
+        
         __gPartZarr = []
         for i in range(10):
             __gPartZarr.append( sp["PartType0", f"Metallicity_{i:02}"].value ) # unitless
@@ -78,33 +79,75 @@ class GalaxyGrid():
         
         dVcell = (L/gridLength)**3
         
-        self.densityGrid = np.zeros((gridLength, gridLength, gridLength))
+        self.gasDensityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        self.gasTemperatureGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        
+        for s in __metalArr:
+            self.metalDensityGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        
         for i in range(len(__gPartCoord)):
             __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
+            __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
             __denGrid = __gPartMass[i]* __gaussGrid / dVcell
             for mi in range(len(__metalArr)):
                 self.metalDensityGrids[__metalArr[mi]] = self.metalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi, i])
-            self.densityGrid = self.densityGrid + __denGrid
+            self.gasDensityGrid = self.densityGrid + __denGrid
+            self.gasTemperatureGrid = self.temperatureGrid + __mT
             
+        self.gasTemperatureGrid = self.temperatureGrid / (self.densityGrid * dVcell)
+            
+        __sPartMass = sp["PartType4","Masses"].to("Msun").value
+        __sPartZ = sp["PartType4","Metallicity"].value
+        __sPartNStar = sp["PartType4","NstarsSpawn"].value
+        __sPartSFT = sp["PartType4","StellarFormationTime"].value
         
+        
+        __sPartZarr = []
+        for i in range(10):
+            __sPartZarr.append( sp["PartType0", f"Metallicity_{i:02}"].value )
+        
+        self.starMassGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        self.starNSpawnGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        self.starSFTGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        self.starMetallicityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        
+        self.starMetalMassGrids = dict()
+        for s in __metalArr:
+            self.starMetalMassGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+        
+        for i in range(len(__sPartCoord)):
+            starSL = star_SL_func(__sPartMass[i])[0]
+            __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
+            self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
+            self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
+            self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
+            self.starMetallicityGrid = self.starMetallicityGrid + __sPartZ * __gaussGrid * __sPartMass[i]
+            for mi in range(len(__metalArr)):
+                self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi, i] * __gaussGrid) 
+                
+        self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
+
 #
 #
 #
         
 class GalaxyGridDataset():
     
-    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac):
+    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None):
         
-        __skidMstarArr = skidcat.stellar_mass.to["Msun"]
         __skidIDArr = skidcat.ids
         
         self.galaxyGridsList = []
+        self.galaxyID = []
+        
         for i in range(len(__skidIDArr)):
             rvir_i = __get_rvir(__skidMstarArr[i], snapname, fstar, deltac)
             r_s = rvir_frac * rvir_i.to("kpccm/h")
             center = skidcat.pos[idx_max]
             sp = ds.sphere(center, r_s)
-            galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, )
+            galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals) #self, id, dsSphere, ds, gridLength, metals=None
+            self.galaxyGridsList.append(galGrid)
+            self.galaxyID.append(__skidIDArr[i])
     
     def __get_rvir(Mstar, snapname, fstar, deltac):
     
@@ -122,10 +165,12 @@ class GalaxyGridDataset():
         Rvir = ds.arr(Rvir_p, "kpc")
     
         return(Rvir)
-    
-    def save(self, filedirname):
-        print("Doesn't save yet")
         
+    def save(self, filedirname):
+        print("Doesn't save yet to npy")
+        
+    def load(self, filedirname):
+        print("Doesn't load yet from npy")
 #
 #
 #
