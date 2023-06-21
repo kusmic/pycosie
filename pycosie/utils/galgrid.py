@@ -144,7 +144,8 @@ class GalaxyGridDataset():
         self.galaxyID = []
         
         for i in range(len(__skidIDArr)):
-            rvir_i = self.__get_rvir(__skidMstarArr[i], snapname, fstar, deltac)
+            print(__skidMstarArr[i])
+            rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, fstar, deltac) 
             r_s = rvir_frac * rvir_i.to("kpccm/h")
             center = skidcat.pos[idx_max]
             sp = ds.sphere(center, r_s)
