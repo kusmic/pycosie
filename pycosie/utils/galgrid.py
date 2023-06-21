@@ -52,9 +52,12 @@ class GalaxyGrid():
         Dz = abs(zMax - zMin)
         
         __domainWidth = ds.domain_width.to("kpccm").value
+        
+        print("before",__gPartCoord)
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
-
+        print("after", __gPartCoord)
+        
         xMin = np.min(__gPartCoord[:,0]) # calculate new transformed coordinates
         xMax = np.max(__gPartCoord[:,0])
         yMin = np.min(__gPartCoord[:,1])
