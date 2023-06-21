@@ -139,7 +139,7 @@ class GalaxyGridDataset():
     def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None):
         
         __skidIDArr = skidcat.ids
-        __skidMstarArr = skidcat.stellar_masses
+        __skidMstarArr = skidcat.stellar_mass
         self.galaxyGridsList = []
         self.galaxyID = []
         
