@@ -7,7 +7,7 @@ from libc.math cimport sqrt, erf
 
 
 def recenter(np.ndarray coord, np.ndarray domainWidth, double Dx, double Dy, double Dz):
-    cdef np.ndarray tempCoord = np.zeros( (coord.shape[0], coord.shape[1], coord.shape[2]))
+    cdef np.ndarray tempCoord = np.zeros( len(coord), len(coord[0]))
     cdef list recenterArr = [0,0,0]
     if Dx > domainWidth[0]/2:
         recenterArr[0] = domainWidth[0]
