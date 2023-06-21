@@ -144,7 +144,7 @@ class GalaxyGridDataset():
         self.galaxyID = []
         
         for i in range(len(__skidIDArr)):
-            rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, fstar, deltac) 
+            rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
             r_s = rvir_frac * rvir_i.to("kpccm/h")
             center = skidcat.pos[idx_max]
             sp = ds.sphere(center, r_s)
@@ -152,8 +152,8 @@ class GalaxyGridDataset():
             self.galaxyGridsList.append(galGrid)
             self.galaxyID.append(__skidIDArr[i])
     
-    def __get_rvir(self, Mstar, snapname, fstar, deltac):
-    
+    def __get_rvir(self, Mstar, snapname, ds, fstar, deltac):
+        
         f = h5.File(snapname, "r")
         Ob = f["Header"].attrs["OmegaBaryon"]
         Om = f["Header"].attrs["Omega0"]
