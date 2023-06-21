@@ -146,7 +146,7 @@ class GalaxyGridDataset():
         for i in range(len(__skidIDArr)):
             rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
             r_s = rvir_frac * rvir_i.to("kpccm/h")
-            center = skidcat.pos[idx_max]
+            center = skidcat.pos[i]
             sp = ds.sphere(center, r_s)
             galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
             self.galaxyGridsList.append(galGrid)
