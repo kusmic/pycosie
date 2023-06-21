@@ -38,12 +38,12 @@ class GalaxyGrid():
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
-        xMin = min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
-        xMax = max(__gPartCoord[:,0])
-        yMin = min(__gPartCoord[:,1])
-        yMax = max(__gPartCoord[:,1])
-        zMin = min(__gPartCoord[:,2])
-        zMax = max(__gPartCoord[:,2])
+        xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
+        xMax = np.max(__gPartCoord[:,0])
+        yMin = np.min(__gPartCoord[:,1])
+        yMax = np.max(__gPartCoord[:,1])
+        zMin = np.min(__gPartCoord[:,2])
+        zMax = np.max(__gPartCoord[:,2])
         
         # Need to recenter coordinates around galaxy and not split around periodic boundaries
     
@@ -55,15 +55,15 @@ class GalaxyGrid():
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
 
-        xMin = min(__gPartCoord[:,0]) # calculate new transformed coordinates
-        xMax = max(__gPartCoord[:,0])
-        yMin = min(__gPartCoord[:,1])
-        yMax = max(__gPartCoord[:,1])
-        zMin = min(__gPartCoord[:,2])
-        zMax = max(__gPartCoord[:,2])
-        Dx = abs(xMax - xMin)
-        Dy = abs(yMax - yMin) # Finding distance span
-        Dz = abs(zMax - zMin)
+        xMin = np.min(__gPartCoord[:,0]) # calculate new transformed coordinates
+        xMax = np.max(__gPartCoord[:,0])
+        yMin = np.min(__gPartCoord[:,1])
+        yMax = np.max(__gPartCoord[:,1])
+        zMin = np.min(__gPartCoord[:,2])
+        zMax = np.max(__gPartCoord[:,2])
+        Dx = np.abs(xMax - xMin)
+        Dy = np.abs(yMax - yMin) # Finding distance span
+        Dz = np.abs(zMax - zMin)
         
         L = max([Dx,Dy,Dz])
         
