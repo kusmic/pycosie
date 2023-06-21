@@ -33,7 +33,7 @@ class GalaxyGrid():
             __metalArr = metals
         
         for mi in range(len(__metalArr)):
-            self.metalDensityGrids[__metalArr[mi]] = np.zeros((gridLength, gridLength, gridLength))
+            self.gasMetalDensityGrids[__metalArr[mi]] = np.zeros((gridLength, gridLength, gridLength))
         
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
@@ -96,8 +96,8 @@ class GalaxyGrid():
             __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
             __denGrid = __gPartMass[i]* __gaussGrid / dVcell
             for mi in range(len(__metalArr)):
-                self.metalDensityGrids[__metalArr[mi]] = self.metalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi][i])
-            self.gasDensityGrid = self.densityGrid + __denGrid
+                self.gasMetalDensityGrids[__metalArr[mi]] = self.gasMetalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi][i])
+            self.gasDensityGrid = self.gasDensityGrid + __denGrid
             self.gasTemperatureGrid = self.temperatureGrid + __mT
             
         self.gasTemperatureGrid = self.temperatureGrid / (self.densityGrid * dVcell)
