@@ -178,12 +178,13 @@ class GalaxyGridDataset():
 #
 #
 
-def make_galaxy_grids(snapname, statname, nproc=1, fstar=0.1, deltac = 200.0, rvir_frac = 0.15):
+def make_galaxy_grids(snapname, statname, grid_length=64, nproc=1, fstar=0.1, deltac = 200.0, rvir_frac = 0.15, metals=None, star_SL_func=None):
     
     yt.set_log_level(0)
     ds = yt.load(snapname)
     skidcat = SkidCatalog(statname, ds)
     
-    galGridDs = GalaxyGridDataset(ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac)
+    galGridDs = GalaxyGridDataset(ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals, star_SL_func)
+    # self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None
     
     return galGridDs
