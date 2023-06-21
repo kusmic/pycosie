@@ -18,7 +18,7 @@ class GalaxyGrid():
     #__gridGaussLoop = __gridGaussLoop
     #__gaussIntgErf = __gaussIntgErf
     
-    def __init__(self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None):
+    def __init__(self, id, sp, ds, gridLength, metals=None, star_SL_func=None):
         
         if star_SL_func == None:
             star_SL_func = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
