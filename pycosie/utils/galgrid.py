@@ -53,10 +53,10 @@ class GalaxyGrid():
         
         __domainWidth = ds.domain_width.to("kpccm").value
         
-        print("before", __gPartCoord.shape )
+        #print("before", __gPartCoord.shape )
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
-        print("after", __gPartCoord.shape )
+        #print("after", __gPartCoord.shape )
         
         xMin = np.min(__gPartCoord[:,0]) # calculate new transformed coordinates
         xMax = np.max(__gPartCoord[:,0])
@@ -96,7 +96,7 @@ class GalaxyGrid():
             __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
             __denGrid = __gPartMass[i]* __gaussGrid / dVcell
             for mi in range(len(__metalArr)):
-                self.metalDensityGrids[__metalArr[mi]] = self.metalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi, i])
+                self.metalDensityGrids[__metalArr[mi]] = self.metalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi][i])
             self.gasDensityGrid = self.densityGrid + __denGrid
             self.gasTemperatureGrid = self.temperatureGrid + __mT
             
@@ -129,7 +129,7 @@ class GalaxyGrid():
             self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
             self.starMetallicityGrid = self.starMetallicityGrid + __sPartZ * __gaussGrid * __sPartMass[i]
             for mi in range(len(__metalArr)):
-                self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi, i] * __gaussGrid) 
+                self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
                 
         self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
 
