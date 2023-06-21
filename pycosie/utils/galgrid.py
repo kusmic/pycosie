@@ -11,7 +11,6 @@ import astropy.units as u
 import astropy.constants as c
 from scipy.interpolate import interp1d
 
-__star_f = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
 
 class GalaxyGrid():
     
@@ -19,7 +18,11 @@ class GalaxyGrid():
     #__gridGaussLoop = __gridGaussLoop
     #__gaussIntgErf = __gaussIntgErf
     
-    def __init__(self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=__star_f):
+    def __init__(self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None):
+        
+        if star_SL_func == None:
+            star_SL_func = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
+
         self.id = id
         self.metalDensityGrids = dict()
         # TD metallicities enumerated "Metallicity_0X"
@@ -133,7 +136,7 @@ class GalaxyGrid():
         
 class GalaxyGridDataset():
     
-    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None):
+    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None):
         
         __skidIDArr = skidcat.ids
         
@@ -145,7 +148,7 @@ class GalaxyGridDataset():
             r_s = rvir_frac * rvir_i.to("kpccm/h")
             center = skidcat.pos[idx_max]
             sp = ds.sphere(center, r_s)
-            galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals) #self, id, dsSphere, ds, gridLength, metals=None
+            galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
             self.galaxyGridsList.append(galGrid)
             self.galaxyID.append(__skidIDArr[i])
     
