@@ -122,7 +122,7 @@ class GalaxyGrid():
             self.starMetalMassGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
         
         for i in range(len(__sPartCoord)):
-            starSL = star_SL_func(__sPartMass[i])[0]
+            starSL = star_SL_func(__sPartMass[i])
             __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
             self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
             self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
