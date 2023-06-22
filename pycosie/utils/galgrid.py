@@ -98,9 +98,9 @@ class GalaxyGrid():
             for mi in range(len(__metalArr)):
                 self.gasMetalDensityGrids[__metalArr[mi]] = self.gasMetalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi][i])
             self.gasDensityGrid = self.gasDensityGrid + __denGrid
-            self.gasTemperatureGrid = self.temperatureGrid + __mT
+            self.gasTemperatureGrid = self.gasTemperatureGrid + __mT
             
-        self.gasTemperatureGrid = self.temperatureGrid / (self.densityGrid * dVcell)
+        self.gasTemperatureGrid = self.gasTemperatureGrid / (self.densityGrid * dVcell)
             
         __sPartMass = sp["PartType4","Masses"].to("Msun").value
         __sPartZ = sp["PartType4","Metallicity"].value
