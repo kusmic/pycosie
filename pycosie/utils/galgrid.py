@@ -100,7 +100,7 @@ class GalaxyGrid():
             self.gasDensityGrid = self.gasDensityGrid + __denGrid
             self.gasTemperatureGrid = self.gasTemperatureGrid + __mT
             
-        self.gasTemperatureGrid = self.gasTemperatureGrid / (self.densityGrid * dVcell)
+        self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
             
         __sPartMass = sp["PartType4","Masses"].to("Msun").value
         __sPartZ = sp["PartType4","Metallicity"].value
