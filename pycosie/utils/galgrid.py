@@ -24,7 +24,7 @@ class GalaxyGrid():
             star_SL_func = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
 
         self.id = id
-        self.metalDensityGrids = dict()
+        self.gasMetalDensityGrids = dict()
         # TD metallicities enumerated "Metallicity_0X"
         # 0:C, 1:O, 2:Si, 3:Fe, 4:N, 5:Ne, 6:Mg, 7:S, 8:Ca, 9:Ti, in that order
         if metals == None:
