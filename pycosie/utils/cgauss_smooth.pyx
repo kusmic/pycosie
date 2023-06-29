@@ -38,7 +38,7 @@ def gaussErf(double t, double a, double b, double sigma):
         # original
         soln = 0.5 * ( erf(C*xa/(sqrt(2)*sigma)) - erf(C*xb/(sqrt(2)*sigma)) )
         # test
-        soln = ( erf(C*xa) - erf(C*xb) )
+        # soln = ( erf(C*xa) - erf(C*xb) )
     else: # is 5-sigma away
         if t > a and t < b: # particle in that grid
             soln = 0.5 * ( erf(C*xa/(np.sqrt(2)*sigma)) - erf(C*xb/(np.sqrt(2)*sigma)) )
@@ -109,6 +109,7 @@ def gaussLoop(int gL, np.ndarray testCoord, double testSL, double L):
                 Kx = gaussErf(testCoord[0], Edges[i], Edges[i+1], sigma)
                 Ky = gaussErf(testCoord[1], Edges[j], Edges[j+1], sigma)
                 Kz = gaussErf(testCoord[2], Edges[k], Edges[k+1], sigma)
+                print(Kx, Ky, Kz)
                 gaussKernel[i,j,k] = Kx * Ky * Kz
     gaussKernel = gaussKernel / np.sum(gaussKernel)
     return(gaussKernel)
