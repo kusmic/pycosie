@@ -92,6 +92,7 @@ class GalaxyGrid():
             self.gasMetalDensityGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
         
         for i in range(len(__gPartCoord)):
+            print(gridLength, __gPartCoord[i], __gPartSL[i], L)
             __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
             __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
             __denGrid = __gPartMass[i]* __gaussGrid / dVcell
