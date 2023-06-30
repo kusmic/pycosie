@@ -1,7 +1,7 @@
 import pyximport
 pyximport.install(setup_args={"script_args" : ["--verbose"]})
 
-from cgauss_smooth import recenter, gaussLoop
+from cgauss_smooth import recenter, gaussLoop, gaussErf
 
 import numpy as np
 from pycosie.cluster.skid import SkidCatalog
@@ -90,6 +90,7 @@ class GalaxyGrid():
             self.gasMetalDensityGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
         
         for i in range(len(__gPartCoord)):
+            print(gridLength, __gPartCoord[i], __gPartSL[i], L)
             __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
             __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
             __denGrid = __gPartMass[i]* __gaussGrid / dVcell
