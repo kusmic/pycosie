@@ -44,7 +44,6 @@ def gaussErf(double t, double a, double b, double sigma):
             soln = 0.5 * ( erf(C*xa/(np.sqrt(2)*sigma)) - erf(C*xb/(np.sqrt(2)*sigma)) )
         else: # not in that grid, do not compute
             soln = 0.0
-    print(soln)
     return(soln)
 #
 def gaussLoop(int gL, np.ndarray testCoord, double testSL, double L):
