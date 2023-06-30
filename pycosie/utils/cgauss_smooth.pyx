@@ -107,9 +107,9 @@ def gaussLoop(int gL, np.ndarray testCoord, double testSL, double L):
     cdef double Kx
     cdef double Ky
     cdef double Kz
-    for i in range(imin, imax):
-        for j in range(jmin,jmax):
-            for k in range(kmin,kmax):
+    for i in range(imin, imax+1):
+        for j in range(jmin,jmax+1):
+            for k in range(kmin,kmax+1):
                 Kx = gaussErf(testCoord[0], Edges[i], Edges[i+1], sigma)
                 Ky = gaussErf(testCoord[1], Edges[j], Edges[j+1], sigma)
                 Kz = gaussErf(testCoord[2], Edges[k], Edges[k+1], sigma)
