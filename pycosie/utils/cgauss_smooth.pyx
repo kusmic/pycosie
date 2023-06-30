@@ -101,6 +101,9 @@ def gaussLoop(int gL, np.ndarray testCoord, double testSL, double L):
                 kmax = __k
                 break
     # Now to loop and find the gaussian kernel
+
+    print("i", imin, imax, "j", jmin, jmax, "k", kmin, kmax)
+
     cdef double Kx
     cdef double Ky
     cdef double Kz
