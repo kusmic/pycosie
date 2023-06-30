@@ -72,6 +72,13 @@ class GalaxyGrid():
         
         self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
         
+        # putting zeropoint at mins
+        
+        for i in range(len(__gPartCoord)):
+            __gPartCoord[i] = __gPartCoord[i] - np.array([xMin, yMin, zMin])
+        for i in range(len(__sPartCoord)):
+            __sPartCoord[i] = __sPartCoord[i] - np.array([xMin, yMin, zMin])
+        
         __gPartSL = sp["PartType0","SmoothingLength"].to("kpccm/h").value #ckpc/h
         __gPartMass =  sp["PartType0","Masses"].to("Msun").value #Msol
         
