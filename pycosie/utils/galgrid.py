@@ -56,12 +56,12 @@ class GalaxyGrid():
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
         
-        xMin = np.min( (__gPartCoord[:,0], __sPartCoord[:,0]) ) # calculate new transformed coordinates
-        xMax = np.max( (__gPartCoord[:,0], __sPartCoord[:,0]) )
-        yMin = np.min( (__gPartCoord[:,1], __sPartCoord[:,1]) )
-        yMax = np.max( (__gPartCoord[:,1], __sPartCoord[:,1]) )
-        zMin = np.min( (__gPartCoord[:,2], __sPartCoord[:,2]) )
-        zMax = np.max( (__gPartCoord[:,2], __sPartCoord[:,2]) )
+        xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # calculate new transformed coordinates
+        xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
+        yMin = np.min( np.concatenate((__gPartCoord[:,1], __sPartCoord[:,1])) )
+        yMax = np.max( np.concatenate((__gPartCoord[:,1], __sPartCoord[:,1])) )
+        zMin = np.min( np.concatenate((__gPartCoord[:,2], __sPartCoord[:,2])) )
+        zMax = np.max( np.concatenate((__gPartCoord[:,2], __sPartCoord[:,2])) )
         Dx = np.abs(xMax - xMin)
         Dy = np.abs(yMax - yMin) # Finding distance span
         Dz = np.abs(zMax - zMin)
