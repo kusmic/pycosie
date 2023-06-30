@@ -112,5 +112,5 @@ def gaussLoop(int gL, np.ndarray testCoord, double testSL, double L):
                 Kz = gaussErf(testCoord[2], Edges[k], Edges[k+1], sigma)
                 print(Kx, Ky, Kz)
                 gaussKernel[i,j,k] = gaussKernel[i,j,k] + ( Kx * Ky * Kz )
-    gaussKernel = gaussKernel / np.sum(gaussKernel)
+    gaussKernel = gaussKernel #/ np.sum(gaussKernel)
     return(gaussKernel)
