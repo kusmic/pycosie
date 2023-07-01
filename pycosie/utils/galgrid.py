@@ -128,6 +128,7 @@ class GalaxyGrid():
         
         for i in range(len(__sPartCoord)):
             starSL = star_SL_func(__sPartMass[i])
+            print(gridLength, __sPartCoord[i], starSL, L)
             __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
             self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
             self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
