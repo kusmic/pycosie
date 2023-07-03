@@ -133,9 +133,7 @@ class GalaxyGrid():
             self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
             self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
             self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
-            print("part z", __sPartZ)
-            PRINT("mass[i]", __sPartMass[i])
-            self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ * __gaussGrid * __sPartMass[i])
+            self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ[i] * __gaussGrid * __sPartMass[i])
             for mi in range(len(__metalArr)):
                 self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
                 
