@@ -38,6 +38,8 @@ class GalaxyGrid():
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
+        print(len(__sPartCoord))
+        
         xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
         xMax = np.max(__gPartCoord[:,0])
         yMin = np.min(__gPartCoord[:,1])
@@ -128,10 +130,6 @@ class GalaxyGrid():
         
         for i in range(len(__sPartCoord)):
             starSL = star_SL_func(__sPartMass[i])
-            
-            print("HERE", gridLength, __sPartCoord[i], starSL, L)
-            
-            continue#
             __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
             self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
             self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
