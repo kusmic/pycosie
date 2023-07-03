@@ -181,18 +181,6 @@ class GalaxyGridDataset():
     
         return(Rvir)
         
-    def save(self, filedirname):
-        
-        with open(filedirname, "w") as fdn:
-            pickle.dump(self, fdn, protocol=pickle.HIGHEST_PROTOCOL)
-        print(f"Saved data at {filedirname}")
-        
-        
-    def load(self, filedirname):
-        
-        with open(filedirname, "r") as fdn:
-            self = pickle.load(fdn)
-        print(f"Loaded data from {filedirname}")
 #
 #
 #
@@ -210,3 +198,16 @@ def make_galaxy_grids(snapname, statname, grid_length=64, nproc=1, fstar=0.1, de
     print("Done.")
     
     return galGridDs
+
+def save(ggds, filedirname):
+        
+    with open(filedirname, "w") as fdn:
+        pickle.dump(ggds, fdn, protocol=pickle.HIGHEST_PROTOCOL)
+    print(f"Saved data at {filedirname}")
+    
+    
+def load(ggds, filedirname):
+    
+    with open(filedirname, "r") as fdn:
+        ggds = pickle.load(fdn)
+    print(f"Loaded data from {filedirname}")
