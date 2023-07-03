@@ -152,7 +152,9 @@ class GalaxyGridDataset():
         self.galaxyGridsList = []
         self.galaxyID = []
         
-        for i in range(len(__skidIDArr)):
+        totGalNum = len(__skidIDArr)
+        
+        for i in range(totGalNum):
             rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
             r_s = rvir_frac * rvir_i.to("kpccm/h")
             center = skidcat.pos[i]
@@ -160,6 +162,8 @@ class GalaxyGridDataset():
             galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
             self.galaxyGridsList.append(galGrid)
             self.galaxyID.append(__skidIDArr[i])
+            print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
+        print(' ')
     
     def __get_rvir(self, Mstar, snapname, ds, fstar, deltac):
         
@@ -203,8 +207,9 @@ def save(ggds, filedirname):
     print(f"Saved data at {filedirname}")
     
     
-def load(ggds, filedirname):
+def load(filedirname):
     
     with open(filedirname, "r") as fdn:
         ggds = pickle.load(fdn)
     print(f"Loaded data from {filedirname}")
+    return ggds
