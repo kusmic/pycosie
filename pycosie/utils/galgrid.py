@@ -10,6 +10,7 @@ import h5py as h5
 import astropy.units as u
 import astropy.constants as c
 from scipy.interpolate import interp1d
+import pickle
 
 
 class GalaxyGrid():
@@ -181,10 +182,17 @@ class GalaxyGridDataset():
         return(Rvir)
         
     def save(self, filedirname):
-        print("Doesn't save yet to npy")
+        
+        with open(filedirname, "w") as fdn:
+            pickle.dump(self, fdn, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"Saved data at {filedirname}")
+        
         
     def load(self, filedirname):
-        print("Doesn't load yet from npy")
+        
+        with open(filedirname, "r") as fdn:
+            self = pickle.load(fdn)
+        print(f"Loaded data from {filedirname}")
 #
 #
 #
