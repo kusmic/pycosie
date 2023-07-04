@@ -181,7 +181,6 @@ class GalaxyGridDataset():
                 print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
             print(' ')
             
-            self.galaxyID = 
             
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
