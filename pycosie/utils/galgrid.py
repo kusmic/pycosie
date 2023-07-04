@@ -60,7 +60,7 @@ class GalaxyGrid():
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
         
         if __sPartCoord.size == 0 or __gPartCoord.size == 0: # no gas or no stars, do not consider
-            Print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
+            print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
             self.gasMetalDensityGrids = None
             self.zoomLength = None
             self.gasDensityGrid = None
