@@ -59,6 +59,19 @@ class GalaxyGrid():
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
         
+        if __sPartCoord.size == 0 or __gPartCoord.size == 0: # no gas or no stars, do not consider
+            Print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
+            self.gasMetalDensityGrids = None
+            self.zoomLength = None
+            self.gasDensityGrid = None
+            self.gasTemperatureGrid = None
+            self.starMassGrid = None
+            self.starNSpawnGrid = None
+            self.starSFTGrid = None
+            self.starMetallicityGrid = None
+            self.starMetalMassGrids = None
+            return None
+        
         xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # calculate new transformed coordinates
         xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
         yMin = np.min( np.concatenate((__gPartCoord[:,1], __sPartCoord[:,1])) )
