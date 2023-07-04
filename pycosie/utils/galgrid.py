@@ -185,7 +185,7 @@ class GalaxyGridDataset():
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
                 for i in range(len(skidIDArr)):
-                    rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
+                    rvir_i = self.__get_rvir( skidMstarArr[i], snapname, ds, fstar, deltac) 
                     r_s = rvir_frac * rvir_i.to("kpccm/h")
                     center = skidcat.pos[i]
                     sp = ds.sphere(center, r_s)
@@ -210,12 +210,15 @@ class GalaxyGridDataset():
                 processes[i].start()
                 
             for p in processes:
-                if p.is_alive():
-                    print(f"GalaxyGridDataset complete: {int(proc_counter)}/{totGalNum}", end='\r', flush=True)
-                    time.sleep(5)
-                else:
-                    print(f"GalaxyGridDataset complete: {int(proc_counter)}/{totGalNum}", end='\r', flush=True)
-                    time.sleep(5)
+                while True:
+                    if p.is_alive():
+                        print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
+                        time.sleep(2)
+                        continue
+                    else:
+                        print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
+                        time.sleep(2)
+                        break
                     
             for i in range(len(id_list)):
                 temp_id = list(id_list[i])
