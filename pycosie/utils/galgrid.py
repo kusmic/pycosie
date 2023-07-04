@@ -206,7 +206,7 @@ class GalaxyGridDataset():
                 grid_list.append(manager.list())
                 arg_tup = (id_list[i], grid_list[i], __skidIDArr[idxArr[i]:idxArr[i+1]], __skidMstarArr[idxArr[i]:idxArr[i+1]], ds, grid_length, 
                            metals, star_SL_func, proc_counter)
-                processes.append( mp.Process(target=dothing, args=(L,i)) )
+                processes.append( mp.Process(target=ggproc, args=(L,i)) )
                 processes[i].start()
                 
             for p in processes:
