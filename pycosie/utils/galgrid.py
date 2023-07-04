@@ -192,11 +192,11 @@ class GalaxyGridDataset():
                     idL.append(skidIDArr[i])
                     temp = GalaxyGrid(skidIDArr, sp, ds, grid_length, metals, star_SL_func)
                     gridL.append(temp)
-                    counter += 1
+                    counter.value += 1
             
             idxArr = np.linspace(0,totGalNum, nproc+1, dtype=int)
             manager = mp.Manager()
-            proc_counter = manager.int()
+            proc_counter = manager.Value('i',0)
             
             grid_list = []
             id_list = []
