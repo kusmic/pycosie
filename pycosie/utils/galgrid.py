@@ -11,6 +11,8 @@ import astropy.units as u
 import astropy.constants as c
 from scipy.interpolate import interp1d
 import pickle
+import multiprocessing as mp
+import time
 
 
 class GalaxyGrid():
@@ -154,16 +156,64 @@ class GalaxyGridDataset():
         
         totGalNum = len(__skidIDArr)
         
-        for i in range(totGalNum):
-            rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
-            r_s = rvir_frac * rvir_i.to("kpccm/h")
-            center = skidcat.pos[i]
-            sp = ds.sphere(center, r_s)
-            galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
-            self.galaxyGridsList.append(galGrid)
-            self.galaxyID.append(__skidIDArr[i])
-            print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
-        print(' ')
+        if nproc == 1:
+            for i in range(totGalNum):
+                rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
+                r_s = rvir_frac * rvir_i.to("kpccm/h")
+                center = skidcat.pos[i]
+                sp = ds.sphere(center, r_s)
+                galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
+                self.galaxyGridsList.append(galGrid)
+                self.galaxyID.append(__skidIDArr[i])
+                print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
+            print(' ')
+            
+            self.galaxyID = 
+            
+        elif nproc > 1:
+            def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
+                for i in range(len(skidIDArr)):
+                    rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
+                    r_s = rvir_frac * rvir_i.to("kpccm/h")
+                    center = skidcat.pos[i]
+                    sp = ds.sphere(center, r_s)
+                    idL.append(skidIDArr[i])
+                    temp = GalaxyGrid(skidIDArr, sp, ds, grid_length, metals, star_SL_func)
+                    gridL.append(temp)
+                    counter += 1
+            
+            idxArr = np.linspace(0,totGalNum, nproc+1, dtype=int)
+            manager = mp.Manager()
+            proc_counter = manager.int()
+            
+            grid_list = []
+            id_list = []
+            processes = []
+            for i in range(nproc):
+                id_list.append(manager.list())
+                grid_list.append(manager.list())
+                arg_tup = (id_list[i], grid_list[i], skidIDArr[idxArr[i]:idxArr[i+1]], skidMstarArr[idxArr[i]:idxArr[i+1]], ds, grid_length, 
+                           metals, star_SL_func, proc_counter)
+                processes.append( Process(target=dothing, args=(L,i)) )
+                processes[i].start()
+                
+            for p in processes:
+                if p.is_alive():
+                    print(f"GalaxyGridDataset complete: {int(proc_counter)}/{totGalNum}", end='\r', flush=True)
+                    time.sleep(5)
+                else:
+                    print(f"GalaxyGridDataset complete: {int(proc_counter)}/{totGalNum}", end='\r', flush=True)
+                    time.sleep(5)
+                    
+            for i in range(len(id_list)):
+                temp_id = list(id_list[i])
+                temp_grid = list(grid_list[i])
+                
+                for j in range(len(temp_id)):
+                    self.galaxyID.append(temp_id[j])
+                    self.galaxyGridsList.append(temp_grid[i])
+            
+                
     
     def __get_rvir(self, Mstar, snapname, ds, fstar, deltac):
         
