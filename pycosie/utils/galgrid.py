@@ -52,7 +52,7 @@ class GalaxyGrid():
             self.starSFTGrid = None
             self.starMetallicityGrid = None
             self.starMetalMassGrids = None
-            return None
+            return 4
                 
         xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
         xMax = np.max(__gPartCoord[:,0])
