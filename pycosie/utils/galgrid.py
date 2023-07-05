@@ -212,13 +212,14 @@ class GalaxyGridDataset():
             for p in processes:
                 while True:
                     if p.is_alive():
-                        print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
-                        time.sleep(2)
+                        #print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
+                        #time.sleep(2)
+                        p.join()
                         continue
                     else:
                         print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
                         time.sleep(2)
-                        break
+                        #break
                     
             for i in range(len(id_list)):
                 temp_id = list(id_list[i])
