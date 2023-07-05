@@ -190,7 +190,7 @@ class GalaxyGridDataset():
                     center = skidcat.pos[i]
                     sp = ds.sphere(center, r_s)
                     idL.append(skidIDArr[i])
-                    temp = GalaxyGrid(skidIDArr, sp, ds, grid_length, metals, star_SL_func)
+                    temp = GalaxyGrid(skidIDArr[i], sp, ds, grid_length, metals, star_SL_func)
                     gridL.append(temp)
                     counter.value += 1
             
