@@ -40,6 +40,19 @@ class GalaxyGrid():
         
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
+        
+        if __sPartCoord.size == 0 or __gPartCoord.size == 0: # no gas or no stars, do not consider
+            print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
+            self.gasMetalDensityGrids = None
+            self.zoomLength = None
+            self.gasDensityGrid = None
+            self.gasTemperatureGrid = None
+            self.starMassGrid = None
+            self.starNSpawnGrid = None
+            self.starSFTGrid = None
+            self.starMetallicityGrid = None
+            self.starMetalMassGrids = None
+            return None
                 
         xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
         xMax = np.max(__gPartCoord[:,0])
@@ -58,19 +71,6 @@ class GalaxyGrid():
         
         __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
         __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
-        
-        if __sPartCoord.size == 0 or __gPartCoord.size == 0: # no gas or no stars, do not consider
-            print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
-            self.gasMetalDensityGrids = None
-            self.zoomLength = None
-            self.gasDensityGrid = None
-            self.gasTemperatureGrid = None
-            self.starMassGrid = None
-            self.starNSpawnGrid = None
-            self.starSFTGrid = None
-            self.starMetallicityGrid = None
-            self.starMetalMassGrids = None
-            return None
         
         xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # calculate new transformed coordinates
         xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
@@ -122,6 +122,15 @@ class GalaxyGrid():
             self.gasTemperatureGrid = self.gasTemperatureGrid + __mT
             
         self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
+        
+        if __sPartCoord.size == 0: # no stars, do not consider
+            print(f"No stars in galaxy {self.id}! Creating None data...\n")
+            self.starMassGrid = None
+            self.starNSpawnGrid = None
+            self.starSFTGrid = None
+            self.starMetallicityGrid = None
+            self.starMetalMassGrids = None
+            return None
             
         __sPartMass = sp["PartType4","Masses"].to("Msun").value
         __sPartZ = sp["PartType4","metallicity"].value
@@ -153,6 +162,8 @@ class GalaxyGrid():
                 self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
                 
         self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
+        
+        return 0
 
 #
 #
