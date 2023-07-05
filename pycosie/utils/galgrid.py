@@ -41,8 +41,8 @@ class GalaxyGrid():
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
-        if __sPartCoord.size == 0 or __gPartCoord.size == 0: # no gas or no stars, do not consider
-            print(f"No stars or gas in galaxy {self.id}! Creating dummy data...\n")
+        if __sPartCoord.size == 0 and __gPartCoord.size == 0: # no gas or no stars, do not consider
+            print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
             self.gasMetalDensityGrids = None
             self.zoomLength = None
             self.gasDensityGrid = None
