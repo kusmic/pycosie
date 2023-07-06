@@ -41,7 +41,7 @@ class GalaxyGrid():
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
-        if __sPartCoord.size == 0 and __gPartCoord.size == 0: # no gas or no stars, do not consider
+        if len(__sPartCoord) < 1 and len(__gPartCoord) < 1: # no gas or no stars, do not consider
             print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
             self.gasMetalDensityGrids = None
             self.zoomLength = None
@@ -123,7 +123,7 @@ class GalaxyGrid():
             
         self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
         
-        if __sPartCoord.size == 0: # no stars, do not consider
+        if len(__sPartCoord) < 1: # no stars, do not consider
             print(f"No stars in galaxy {self.id}! Creating None data...\n")
             self.starMassGrid = None
             self.starNSpawnGrid = None
