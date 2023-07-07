@@ -41,13 +41,13 @@ class GalaxyGrid():
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
-        print(len(__sPartCoord))
-        self.__starCountDebug = len(__sPartCoord)
+        #print(len(__sPartCoord))
+        #self.__starCountDebug = len(__sPartCoord)
     
-        return None
+        #return None
     
         if len(__sPartCoord) < 1 and len(__gPartCoord) < 1: # no gas or no stars, do not consider
-            print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
+            #print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
             self.gasMetalDensityGrids = None
             self.zoomLength = None
             self.gasDensityGrid = None
@@ -129,7 +129,7 @@ class GalaxyGrid():
         self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
         
         if len(__sPartCoord) < 1: # no stars, do not consider
-            print(f"No stars in galaxy {self.id}! Creating None data...\n")
+            #print(f"No stars in galaxy {self.id}! Creating None data...\n")
             self.starMassGrid = None
             self.starNSpawnGrid = None
             self.starSFTGrid = None
@@ -209,6 +209,7 @@ class GalaxyGridDataset():
                     temp = GalaxyGrid(skidIDArr[i], sp, ds, grid_length, metals, star_SL_func)
                     gridL.append(temp)
                     counter.value += 1
+                    print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
             
             idxArr = np.linspace(0,totGalNum, nproc+1, dtype=int)
             manager = mp.Manager()
@@ -226,16 +227,7 @@ class GalaxyGridDataset():
                 processes[i].start()
                 
             for p in processes:
-                while True:
-                    if p.is_alive():
-                        #print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
-                        #time.sleep(2)
-                        p.join()
-                        continue
-                    else:
-                        print(f"GalaxyGridDataset complete: {int(proc_counter.value)}/{totGalNum}", end='\r', flush=True)
-                        time.sleep(2)
-                        #break
+                p.join()
                     
             for i in range(len(id_list)):
                 temp_id = list(id_list[i])
