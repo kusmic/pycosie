@@ -40,6 +40,7 @@ class GalaxyGrid():
         
         __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
+        print(__sPartCoord)
         
         if len(__sPartCoord) < 1 and len(__gPartCoord) < 1: # no gas or no stars, do not consider
             print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
