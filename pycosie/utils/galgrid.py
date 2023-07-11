@@ -42,7 +42,7 @@ class GalaxyGrid():
         __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
         
         #print(len(__sPartCoord))
-        #self.__starCountDebug = len(__sPartCoord)
+        self.starCountDebug = len(__sPartCoord)
     
         #return None
     
