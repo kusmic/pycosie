@@ -47,7 +47,7 @@ class GalaxyGrid():
         #return None
     
         if len(__sPartCoord) < 1 and len(__gPartCoord) < 1: # no gas or no stars, do not consider
-            #print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
+            print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
             self.gasMetalDensityGrids = None
             self.zoomLength = None
             self.gasDensityGrid = None
@@ -129,7 +129,7 @@ class GalaxyGrid():
         self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
         
         if len(__sPartCoord) < 1: # no stars, do not consider
-            #print(f"No stars in galaxy {self.id}! Creating None data...\n")
+            print(f"No stars in galaxy {self.id}! Creating None data...\n")
             self.starMassGrid = None
             self.starNSpawnGrid = None
             self.starSFTGrid = None
@@ -194,7 +194,7 @@ class GalaxyGridDataset():
                 galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
                 self.galaxyGridsList.append(galGrid)
                 self.galaxyID.append(__skidIDArr[i])
-                #print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
+                print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
             print(' ')
             
             
