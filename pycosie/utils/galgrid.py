@@ -182,8 +182,8 @@ class GalaxyGrid():
                         print("mi", mi)
                         print("i", i)
                         print("metalArr", __metalArr)
-                        print("sPartMass", __sPartMass)
-                        print("sPartZarr", __sPartZarr)
+                        print("sPartMass", __sPartMass, "len:", len(__sPartMass))
+                        print("sPartZarr", __sPartZarr, "len:", len(__sPartZarr))
                         sys.exit()
                         
 
