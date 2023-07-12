@@ -197,7 +197,7 @@ class GalaxyGridDataset():
         totGalNum = len(__skidIDArr)
         
         if nproc == 1:
-            for i in range(totGalNum): 
+            for i in range(550, totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
                 r_s = rvir_frac * rvir_i.to("kpccm/h")
                 center = skidcat.pos[i]
