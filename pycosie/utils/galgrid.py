@@ -178,6 +178,7 @@ class GalaxyGrid():
                     try:
                         self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
                     except IndexError:
+                        print("len", len(__sPartCoord))
                         print("mi", mi)
                         print("i", i)
                         print("metalArr", __metalArr)
