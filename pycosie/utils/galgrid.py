@@ -48,7 +48,7 @@ class GalaxyGrid():
 
             #return None
 
-            if len(__sPartCoord) < 1 or len(__gPartCoord) < 1: # no gas or no stars, do not consider
+            if len(__gPartCoord) < 1: # no gas or no stars, do not consider
                 print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
                 self.gasMetalDensityGrids = None
                 self.zoomLength = None
