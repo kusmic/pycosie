@@ -73,8 +73,7 @@ class GalaxyGrid():
                 print("gPx, ",__gPartCoord[:,0])
                 print("gPy, ",__gPartCoord[:,1])
                 print("gPz, ",__gPartCoord[:,2])
-                raise ValueError("zero-size array to reduction operation minimum which has no identity")
-
+                print("FUCKING FUCKY-WUCKY!!!!")
             # Need to recenter coordinates around galaxy and not split around periodic boundaries
 
             Dx = abs(xMax - xMin)
@@ -196,7 +195,7 @@ class GalaxyGridDataset():
         totGalNum = len(__skidIDArr)
         
         if nproc == 1:
-            for i in range(totGalNum):
+            for i in range(550, totGalNum): # REMEMBER THIS SAMIRE
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
                 r_s = rvir_frac * rvir_i.to("kpccm/h")
                 center = skidcat.pos[i]
