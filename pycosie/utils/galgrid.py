@@ -58,7 +58,7 @@ class GalaxyGrid():
             self.starSFTGrid = None
             self.starMetallicityGrid = None
             self.starMetalMassGrids = None
-            sys.exit()
+            return
                 
         try:
             xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
@@ -143,7 +143,7 @@ class GalaxyGrid():
             self.starSFTGrid = None
             self.starMetallicityGrid = None
             self.starMetalMassGrids = None
-            sys.exit()
+            return
             
         __sPartMass = sp["PartType4","Masses"].to("Msun").value
         __sPartZ = sp["PartType4","metallicity"].value
@@ -176,6 +176,7 @@ class GalaxyGrid():
                 
         self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
         
+        print("IF NO STARS THEN IT FAILED!!!")
         return None
 
 #
