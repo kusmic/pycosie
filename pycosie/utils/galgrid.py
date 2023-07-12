@@ -13,6 +13,7 @@ from scipy.interpolate import interp1d
 import pickle
 import multiprocessing as mp
 import time
+import sys
 
 
 class GalaxyGrid():
@@ -57,7 +58,7 @@ class GalaxyGrid():
             self.starSFTGrid = None
             self.starMetallicityGrid = None
             self.starMetalMassGrids = None
-            return None
+            sys.exit()
                 
         try:
             xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
@@ -142,7 +143,7 @@ class GalaxyGrid():
             self.starSFTGrid = None
             self.starMetallicityGrid = None
             self.starMetalMassGrids = None
-            return None
+            sys.exit()
             
         __sPartMass = sp["PartType4","Masses"].to("Msun").value
         __sPartZ = sp["PartType4","metallicity"].value
