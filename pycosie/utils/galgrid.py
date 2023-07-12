@@ -176,7 +176,6 @@ class GalaxyGrid():
 
             self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
 
-            print("IF NO STARS THEN IT FAILED!!!")
             break
 
 #
@@ -195,7 +194,7 @@ class GalaxyGridDataset():
         totGalNum = len(__skidIDArr)
         
         if nproc == 1:
-            for i in range(550, totGalNum): # REMEMBER THIS SAMIRE
+            for i in range(totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
                 r_s = rvir_frac * rvir_i.to("kpccm/h")
                 center = skidcat.pos[i]
