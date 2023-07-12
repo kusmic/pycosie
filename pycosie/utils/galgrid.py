@@ -74,6 +74,9 @@ class GalaxyGrid():
                 print("gPy, ",__gPartCoord[:,1])
                 print("gPz, ",__gPartCoord[:,2])
                 print("FUCKING FUCKY-WUCKY!!!!")
+                sys.exit()
+
+                return
             # Need to recenter coordinates around galaxy and not split around periodic boundaries
 
             Dx = abs(xMax - xMin)
