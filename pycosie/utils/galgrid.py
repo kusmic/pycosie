@@ -59,12 +59,19 @@ class GalaxyGrid():
             self.starMetalMassGrids = None
             return None
                 
-        xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
-        xMax = np.max(__gPartCoord[:,0])
-        yMin = np.min(__gPartCoord[:,1])
-        yMax = np.max(__gPartCoord[:,1])
-        zMin = np.min(__gPartCoord[:,2])
-        zMax = np.max(__gPartCoord[:,2])
+        try:
+            xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
+            xMax = np.max(__gPartCoord[:,0])
+            yMin = np.min(__gPartCoord[:,1])
+            yMax = np.max(__gPartCoord[:,1])
+            zMin = np.min(__gPartCoord[:,2])
+            zMax = np.max(__gPartCoord[:,2])
+            
+        except ValueError:
+            print("gPx, ",__gPartCoord[:,0])
+            print("gPy, ",__gPartCoord[:,1])
+            print("gPz, ",__gPartCoord[:,2])
+            raise ValueError("zero-size array to reduction operation minimum which has no identity")
         
         # Need to recenter coordinates around galaxy and not split around periodic boundaries
     
