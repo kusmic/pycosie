@@ -175,7 +175,16 @@ class GalaxyGrid():
                 self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
                 self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ[i] * __gaussGrid * __sPartMass[i])
                 for mi in range(len(__metalArr)):
-                    self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
+                    try:
+                        self.starMetalMassGrids[__metalArr[mi]] = self.starMetalMassGrids[__metalArr[mi]] + (__sPartMass[i] * __sPartZarr[mi][i] * __gaussGrid) 
+                    except IndexError:
+                        print("mi", mi)
+                        print("i", i)
+                        print("metalArr", __metalArr)
+                        print("sPartMass", __sPartMass)
+                        print("sPartZarr", __sPartZarr)
+                        sys.exit()
+                        
 
             self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
 
@@ -197,7 +206,7 @@ class GalaxyGridDataset():
         totGalNum = len(__skidIDArr)
         
         if nproc == 1:
-            for i in range(550, totGalNum): 
+            for i in range(1239, totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
                 r_s = rvir_frac * rvir_i.to("kpccm/h")
                 center = skidcat.pos[i]
