@@ -152,7 +152,7 @@ class GalaxyGrid():
             __sPartMass = sp["PartType4","Masses"].to("Msun").value
             __sPartZ = sp["PartType4","metallicity"].value
             __sPartNStar = sp["PartType4","NstarsSpawn"].value
-            __sPartSFT = sp["PartType4","StellarFormationTime"].to("s").value
+            __sPartSFT = sp["PartType4","StellarFormationTime"].value # in scale factor
             __sTMax = sp["PartType4","TemperatureMax"].to("K").value
 
 
