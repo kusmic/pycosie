@@ -152,7 +152,8 @@ class GalaxyGrid():
             __sPartMass = sp["PartType4","Masses"].to("Msun").value
             __sPartZ = sp["PartType4","metallicity"].value
             __sPartNStar = sp["PartType4","NstarsSpawn"].value
-            __sPartSFT = sp["PartType4","StellarFormationTime"].value
+            __sPartSFT = sp["PartType4","StellarFormationTime"].to("s").value
+            __sTMax = sp["PartType4","TemperatureMax"].to("K").value
 
 
             __sPartZarr = []
@@ -163,6 +164,7 @@ class GalaxyGrid():
             self.starNSpawnGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
             self.starSFTGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
             self.starMetallicityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+            self.starTemperatureMaxGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
 
             self.starMetalMassGrids = dict()
             for s in __metalArr:
@@ -175,9 +177,11 @@ class GalaxyGrid():
                 self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
                 self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
                 self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ[i] * __gaussGrid * __sPartMass[i])
+                self.starTemperatureMaxGrid = self.starTemperatureMaxGrid + (__sTMax[i] * __gaussGrid * __sPartMass[i])
                 # hope I don't need different metal fractions, I don't know what they are it's 10x2 array WHAT IS THE 2?!    
 
             self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
+            self.starTemperatureMaxGrid = self.starTemperatureMaxGrid / self.starMassGrid
 
             break
 
