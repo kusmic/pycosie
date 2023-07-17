@@ -42,33 +42,42 @@ class GalaxyGrid():
 
             __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
             __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
+            __sPartID = sp["PartType4","ParticleIDs"].value
 
             #print(len(__sPartCoord))
             self.starCount = len(__sPartCoord)
-            self.starParticleIDs = sp["PartType4","ParticleIDs"].value
+            
 
             #return None
 
-            if len(__gPartCoord) < 1: # no gas or no stars, do not consider
-                print(f"No stars and no gas in galaxy {self.id}! Creating dummy data...\n")
+            if len(__gPartCoord) < 1 and len(__sPartCoord) < 1: # no gas or no stars, do not consider
+                print(f"No stars and no gas in galaxy {self.id}! Creating None data for all...\n")
                 self.gasMetalDensityGrids = None
                 self.zoomLength = None
                 self.gasDensityGrid = None
                 self.gasTemperatureGrid = None
-                self.starMassGrid = None
-                self.starNSpawnGrid = None
-                self.starSFTGrid = None
-                self.starMetallicityGrid = None
-                self.starMetalMassGrids = None
+                self.starParticle = None
                 break
+            
+            elif len(__gPartCoord) < 1:
+                print(f"No gas in galaxy {self.id}! Creating None data for only gas...\n")
+                self.gasMetalDensityGrids = None
+                self.zoomLength = None
+                self.gasDensityGrid = None
+                self.gasTemperatureGrid = None
+                self.starParticle = {"id":[], "pos":[]}
+                for si in range(len(__sPartCoord)):
+                    self.starParticle["id"].append(__sPartID[si])
+                    self.starParticle["pos"].append(__sPartCoord[si])
+
 
             try:
-                xMin = np.min(__gPartCoord[:,0]) # getting min and max of each cartesian axis
-                xMax = np.max(__gPartCoord[:,0])
-                yMin = np.min(__gPartCoord[:,1])
-                yMax = np.max(__gPartCoord[:,1])
-                zMin = np.min(__gPartCoord[:,2])
-                zMax = np.max(__gPartCoord[:,2])
+                xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # getting min and max of each cartesian axis
+                xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
+                yMin = np.min( np.concatenate((__gPartCoord[:,1], __sPartCoord[:,1])) )
+                yMax = np.max( np.concatenate((__gPartCoord[:,1], __sPartCoord[:,1])) )
+                zMin = np.min( np.concatenate((__gPartCoord[:,2], __sPartCoord[:,2])) )
+                zMax = np.max( np.concatenate((__gPartCoord[:,2], __sPartCoord[:,2])) )
 
             except ValueError:
                 print("gPx, ",__gPartCoord[:,0])
@@ -101,7 +110,12 @@ class GalaxyGrid():
 
             L = max([Dx,Dy,Dz])
 
+            self.originPoint = np.array([xMin, yMin, zMin])
             self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
+            self.starParticle = {"id":[], "pos":[]}
+            for si in range(len(__sPartCoord)):
+                self.starParticle["id"].append(__sPartID[si])
+                self.starParticle["pos"].append(__sPartCoord[si])
 
             # putting zeropoint at mins
 
@@ -140,48 +154,44 @@ class GalaxyGrid():
 
             self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
 
-            if len(__sPartCoord) < 1: # no stars, do not consider
-                print(f"No stars in galaxy {self.id}! Creating None data...\n")
-                self.starMassGrid = None
-                self.starNSpawnGrid = None
-                self.starSFTGrid = None
-                self.starMetallicityGrid = None
-                self.starMetalMassGrids = None
-                break
-
-            __sPartMass = sp["PartType4","Masses"].to("Msun").value
-            __sPartZ = sp["PartType4","metallicity"].value
-            __sPartNStar = sp["PartType4","NstarsSpawn"].value
-            __sPartSFT = sp["PartType4","StellarFormationTime"].value # in scale factor
-            __sTMax = sp["PartType4","TemperatureMax"].value
-
-
-            __sPartZarr = []
-            for i in range(10):
-                __sPartZarr.append( sp["PartType0", f"Metallicity_{i:02}"].value )
-
-            self.starMassGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-            self.starNSpawnGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-            self.starSFTGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-            self.starMetallicityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-            self.starTemperatureMaxGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-
-            self.starMetalMassGrids = dict()
-            for s in __metalArr:
-                self.starMetalMassGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
-
-            for i in range(len(__sPartCoord)):
-                starSL = star_SL_func(__sPartMass[i])
-                __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
-                self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
-                self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
-                self.starSFTGrid = self.starSFTGrid + __sPartSFT[i] * __gaussGrid
-                self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ[i] * __gaussGrid * __sPartMass[i])
-                self.starTemperatureMaxGrid = self.starTemperatureMaxGrid + (__sTMax[i] * __gaussGrid * __sPartMass[i])
-                # hope I don't need different metal fractions, I don't know what they are it's 10x2 array WHAT IS THE 2?!    
-
-            self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
-            self.starTemperatureMaxGrid = self.starTemperatureMaxGrid / self.starMassGrid
+            #if len(__sPartCoord) < 1: # no stars, do not consider
+            #    print(f"No stars in galaxy {self.id}! Creating None data...\n")
+            #    self.starMassGrid = None
+            #    self.starSFTGrid = None
+            #    self.starMetallicityGrid = None
+            #    break
+#
+            #__sPartMass = sp["PartType4","Masses"].to("Msun").value
+            #__sPartZ = sp["PartType4","metallicity"].value
+            #__sPartNStar = sp["PartType4","NstarsSpawn"].value
+            #__sPartSFT = sp["PartType4","StellarFormationTime"].value # in scale factor
+            #__sTMax = sp["PartType4","TemperatureMax"].value
+#
+#
+            #__sPartZarr = []
+            #for i in range(10):
+            #    __sPartZarr.append( sp["PartType0", f"Metallicity_{i:02}"].value )
+#
+            #self.starMassGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+            #self.starSFTGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+            #self.starMetallicityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+            #self.starTemperatureMaxGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+#
+            #self.starMetalMassGrids = dict()
+            #for s in __metalArr:
+            #    self.starMetalMassGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
+#
+            #for i in range(len(__sPartCoord)):
+            #    starSL = star_SL_func(__sPartMass[i])
+            #    __gaussGrid = gaussLoop(gridLength, __sPartCoord[i], starSL, L)
+            #    self.starMassGrid = self.starMassGrid + __sPartMass[i] * __gaussGrid
+            #    self.starNSpawnGrid = self.starNSpawnGrid + __sPartNStar[i] * __gaussGrid
+            #    self.starMetallicityGrid = self.starMetallicityGrid + (__sPartZ[i] * __gaussGrid * __sPartMass[i])
+            #    self.starTemperatureMaxGrid = self.starTemperatureMaxGrid + (__sTMax[i] * __gaussGrid * __sPartMass[i])
+            #    # hope I don't need different metal fractions, I don't know what they are it's 10x2 array WHAT IS THE 2?!    
+#
+            #self.starMetallicityGrid = self.starMetallicityGrid / self.starMassGrid
+            #self.starTemperatureMaxGrid = self.starTemperatureMaxGrid / self.starMassGrid
 
             break
 
@@ -266,7 +276,7 @@ class GalaxyGridDataset():
         Ms = Mstar.value * u.Msun
         rhoc = ((3 * (h*100 * u.km / u.s / u.Mpc)**2) / (8 * np.pi * c.G)).decompose() * (Om*(1+z)**3 + Ol)
         Mvir = (Ms/fstar) * (Om/Ob)
-        Rvir_p = np.power( ((3*Mvir)/(4*np.pi*rhoc*(1+deltac))), 1/3).to(u.kpc)
+        Rvir_p = np.power( ((3*Mvir)/(4*np.pi*rhoc*(deltac))), 1/3).to(u.kpc)
         Rvir = ds.arr(Rvir_p, "kpc")
     
         return(Rvir)
