@@ -69,6 +69,7 @@ class GalaxyGrid():
                 for si in range(len(__sPartCoord)):
                     self.starParticle["id"].append(__sPartID[si])
                     self.starParticle["pos"].append(__sPartCoord[si])
+                break
 
 
             try:
