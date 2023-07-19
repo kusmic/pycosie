@@ -143,8 +143,6 @@ class GalaxyGrid():
             self.gasDensityGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
             self.gasTemperatureGrid = np.zeros((gridLength, gridLength, gridLength), dtype=float)
 
-            for s in __metalArr:
-                self.gasMetalDensityGrids[s] = np.zeros((gridLength, gridLength, gridLength), dtype=float)
 
             for i in range(len(__gPartCoord)):
                 __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
