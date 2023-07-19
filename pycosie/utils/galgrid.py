@@ -52,7 +52,7 @@ class GalaxyGrid():
 
             if len(__gPartCoord) < 1 and len(__sPartCoord) < 1: # no gas or no stars, do not consider
                 print(f"No stars and no gas in galaxy {self.id}! Creating None data for all...\n")
-                self.gasMetalDensityGrids = None
+                self.gasMetalMassFractionGrids = None
                 self.zoomLength = None
                 self.gasDensityGrid = None
                 self.gasTemperatureGrid = None
@@ -61,7 +61,7 @@ class GalaxyGrid():
             
             elif len(__gPartCoord) < 1:
                 print(f"No gas in galaxy {self.id}! Creating None data for only gas...\n")
-                self.gasMetalDensityGrids = None
+                self.gasMetalMassFractionGrids = None
                 self.zoomLength = None
                 self.gasDensityGrid = None
                 self.gasTemperatureGrid = None
@@ -149,11 +149,15 @@ class GalaxyGrid():
             for i in range(len(__gPartCoord)):
                 __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
                 __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
+                __massGrid = __gPartMass[i]* __gaussGrid
                 __denGrid = __gPartMass[i]* __gaussGrid / dVcell
                 for mi in range(len(__metalArr)):
-                    self.gasMetalDensityGrids[__metalArr[mi]] = self.gasMetalDensityGrids[__metalArr[mi]] + (__denGrid * __gPartZarr[mi][i])
+                    self.gasMetalMassFractionGrids[__metalArr[mi]] = self.gasMetalDensityGrids[__metalArr[mi]] + (__massGrid * __gPartZarr[mi][i])
                 self.gasDensityGrid = self.gasDensityGrid + __denGrid
                 self.gasTemperatureGrid = self.gasTemperatureGrid + __mT
+                
+            for mi in range(len(__metalArr)):
+                self.gasMetalMassFractionGrids[__metalArr[mi]] = self.gasMetalMassFractionGrids[__metalArr[mi]] / (self.gasDensityGrid * dVcell)
 
             self.gasTemperatureGrid = self.gasTemperatureGrid / (self.gasDensityGrid * dVcell)
 
