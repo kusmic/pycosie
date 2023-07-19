@@ -112,13 +112,7 @@ class GalaxyGrid():
 
             L = max([Dx,Dy,Dz])
 
-            self.originPoint = np.array([xMin, yMin, zMin])
-            self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
-            self.starParticle = {"id":[], "pos":[]}
-            for si in range(len(__sPartCoord)):
-                self.starParticle["id"].append(__sPartID[si])
-                self.starParticle["pos"].append(__sPartCoord[si])
-            self.starParticle["pos"] = np.array(self.starParticle["pos"])
+            
 
             # putting zeropoint at mins
 
@@ -126,6 +120,14 @@ class GalaxyGrid():
                 __gPartCoord[i] = __gPartCoord[i] - np.array([xMin, yMin, zMin])
             for i in range(len(__sPartCoord)):
                 __sPartCoord[i] = __sPartCoord[i] - np.array([xMin, yMin, zMin])
+                
+            self.originPoint = np.array([xMin, yMin, zMin])
+            self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
+            self.starParticle = {"id":[], "pos":[]}
+            for si in range(len(__sPartCoord)):
+                self.starParticle["id"].append(__sPartID[si])
+                self.starParticle["pos"].append(__sPartCoord[si])
+            self.starParticle["pos"] = np.array(self.starParticle["pos"])
 
             __gPartSL = sp["PartType0","SmoothingLength"].to("kpccm/h").value #ckpc/h
             __gPartMass =  sp["PartType0","Masses"].to("Msun").value #Msol
