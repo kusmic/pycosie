@@ -67,7 +67,7 @@ class GalaxyGrid():
                 self.gasTemperatureGrid = None
                 self.starParticle = {"id":[], "pos":[]}
                 for si in range(len(__sPartCoord)):
-                    self.starParticle["id"].append(__sPartID[si])
+                    self.starParticle["id"].append(int(__sPartID[si]))
                     self.starParticle["pos"].append(__sPartCoord[si])
                 self.starParticle["pos"] = np.array(self.starParticle["pos"])
                 break
@@ -125,7 +125,7 @@ class GalaxyGrid():
             self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
             self.starParticle = {"id":[], "pos":[]}
             for si in range(len(__sPartCoord)):
-                self.starParticle["id"].append(__sPartID[si])
+                self.starParticle["id"].append(int(__sPartID[si]))
                 self.starParticle["pos"].append(__sPartCoord[si])
             self.starParticle["pos"] = np.array(self.starParticle["pos"])
 
