@@ -152,7 +152,7 @@ class GalaxyGrid():
                 __massGrid = __gPartMass[i]* __gaussGrid
                 __denGrid = __gPartMass[i]* __gaussGrid / dVcell
                 for mi in range(len(__metalArr)):
-                    self.gasMetalMetallicityGrids[__metalArr[mi]] = self.gasMetalDensityGrids[__metalArr[mi]] + (__massGrid * __gPartZarr[mi][i])
+                    self.gasMetalMetallicityGrids[__metalArr[mi]] = self.gasMetalMetallicityGrids[__metalArr[mi]] + (__massGrid * __gPartZarr[mi][i])
                 self.gasDensityGrid = self.gasDensityGrid + __denGrid
                 self.gasTemperatureGrid = self.gasTemperatureGrid + __mT
                 
