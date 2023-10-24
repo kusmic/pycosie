@@ -24,6 +24,19 @@ class GalaxyGrid():
     
     def __init__(self, id, sp, ds, gridLength, metals=None, star_SL_func=None):
         
+        """
+        Attributes:
+        - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
+        ["C","O","Si","Fe","N","Ne","Mg","S","Ca","Ti"]
+        - zoomLength: float: side length of square grid in ckpc/h
+        - gasDensityGrid: array[float]: Holds density of grid in each cell in units Msun/(ckpc/h)^3
+        - gasTemperatureGrid: array[float]: Holds temperature of grid in each cell in units K
+        - starParticle: dict(array[int, array]): Dictionary holding star information. Key "id" has integer star particle
+        ID from simulation. Key "pos" has position of star particle relative to origin of grid in ckpc/h
+        
+        
+        """
+        
         while True:
             if star_SL_func == None:
                 star_SL_func = interp1d([91450.403, 188759.328], [0.100, 0.300], kind="linear", fill_value="extrapolate") # stellar mass in Msun to smoothing length in ckpc/h
@@ -95,7 +108,7 @@ class GalaxyGrid():
             Dy = abs(yMax - yMin) # Finding distance span
             Dz = abs(zMax - zMin)
 
-            __domainWidth = ds.domain_width.to("kpccm").value
+            __domainWidth = ds.domain_width.to("kpccm/h").value
 
             __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
             __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
@@ -207,9 +220,14 @@ class GalaxyGrid():
 #
         
 class GalaxyGridDataset():
+    """
+    Arrtibutes:
+    - galaxyID: list[int]: Holds integer galaxy ID from SKID catalog
+    - galaxyGridsList: list[GalaxyGrid]: Holds GalaxyGrid object for galaxy
+    """
     
     def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None):
-        
+
         __skidIDArr = skidcat.ids
         __skidMstarArr = skidcat.stellar_mass
         self.galaxyGridsList = []
@@ -293,7 +311,24 @@ class GalaxyGridDataset():
 #
 
 def make_galaxy_grids(snapname, statname, grid_length=64, nproc=1, fstar=0.1, deltac = 200.0, rvir_frac = 0.15, metals=None, star_SL_func=None):
-    
+    """_summary_
+
+    Args:
+        snapname (str): Path and name of simulation snapshot
+        statname (str): Path and name of SKID stat file for snapshot
+        grid_length (int, optional): Length of grid cell in cells. Defaults to 64.
+        nproc (int, optional): Number of processors to use. Defaults to 1.
+        fstar (float, optional): Fraction of galaxy stellar mass to halo mass. Defaults to 0.1.
+        deltac (float, optional): Overdensity. Defaults to 200.0.
+        rvir_frac (float, optional): Fraction of virial radius to use for making grid. Defaults to 0.15.
+        metals (array_like[str], optional): Holds string information of shorthand metal names, e.g. "C", "O". If none, then
+        uses a predefined array. Defaults to None.
+        star_SL_func (interp1d, optional): Scipy interp1d function used for smoothing length of star particles. If none,
+        uses a predefined function. Defaults to None.
+
+    Returns:
+        GalaxyGridDataset: Dataset of grids for galaxies in snapshot
+    """
     yt.set_log_level(0)
     print("Loading snapshots...")
     ds = yt.load(snapname)
