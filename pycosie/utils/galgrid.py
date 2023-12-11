@@ -22,9 +22,7 @@ class GalaxyGrid():
     #__gridGaussLoop = __gridGaussLoop
     #__gaussIntgErf = __gaussIntgErf
     
-    def __init__(self, id, sp, ds, gridLength, metals=None, star_SL_func=None):
-        
-        """
+    """
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
         ["C","O","Si","Fe","N","Ne","Mg","S","Ca","Ti"]
@@ -33,9 +31,12 @@ class GalaxyGrid():
         - gasTemperatureGrid: array[float]: Holds temperature of grid in each cell in units K
         - starParticle: dict(array[int, array]): Dictionary holding star information. Key "id" has integer star particle
         ID from simulation. Key "pos" has position of star particle relative to origin of grid in ckpc/h
+        - starCount: int: Number of stars in galaxy. Can be used as flag to check if stars in galaxy.
         
         
         """
+    
+    def __init__(self, id, sp, ds, gridLength, metals=None, star_SL_func=None):
         
         while True:
             if star_SL_func == None:
