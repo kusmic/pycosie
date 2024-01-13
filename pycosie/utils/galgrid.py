@@ -227,7 +227,7 @@ class GalaxyGridDataset():
     - galaxyGridsList: list[GalaxyGrid]: Holds GalaxyGrid object for galaxy
     """
     
-    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None):
+    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None, filedirname=None):
 
         __skidIDArr = skidcat.ids
         __skidMstarArr = skidcat.stellar_mass
@@ -236,6 +236,8 @@ class GalaxyGridDataset():
         
         totGalNum = len(__skidIDArr)
         
+        if type(filedirname) == type(None):
+            filedirname = "SOMETHING"
         if nproc == 1:
             for i in range(totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
@@ -306,6 +308,9 @@ class GalaxyGridDataset():
         Rvir = ds.arr(Rvir_p, "kpc")
     
         return(Rvir)
+    
+    def __run__(self):
+        
         
 #
 #
