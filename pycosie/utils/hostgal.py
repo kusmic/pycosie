@@ -99,12 +99,34 @@ def __print_complete(counter, N):
     percent = f"{counter.value} / {N}"
     percentage = f"..... {percent} launched particles processed"
     print(percentage, end="\r")
+    
+def __check__metal(ion, gasZ, gas_idx, threshhold=0.0):
+    metal_i = -9
+    gasz_i = -9
+    if "C" == ion[0]:
+        metal_i = 0
+        gasz_i = 0
+    elif "O" == ion[0]:
+        metal_i = 1
+        gasz_i = 1
+    elif "Si" == ion[0:2]:
+        metal_i = 2
+        gasz_i = 2
+    elif "Mg" == ion[0:2]:
+        metal_i = 6
+        gasz_i = 3
+        
+    Z = gasZ[gasZ_i][gas_idx]
+    if Z > threshold:
+        return True
+    else:
+        return False
 
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
              gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True,
-             rewind=False, gasLLTArr=None, ytds=None, galVelArr=None):
+             rewind=False, gasLLTArr=None, ytds=None, galVelArr=None, checkMetal=False, gasZArr=None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -202,6 +224,11 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
         else:
             r_s = smoothLengthArr * SLfactor / lbox.to("kpccm/h").value[0]
         for ioni, ion in enumerate(ion_i_lines):
+            #checking metals
+            if checkMetal:
+                hasMetal = __check__metal(ion, gasZArr, gi)
+                if not hasMetal:
+                    continue
             sysID = vpmDict[ion]["ID"]
             sysVel = vpmDict[ion]["v"]
             if type(sysVel) == type(None) and type(sysID) == type(None):
@@ -347,7 +374,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
 def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0, bbox=None, unit_base=None, n_i=0,
                 n_f=None, merged=True, N_LLP=N_LLP, multifile=True, write=True, __debugMode__ = False, gal_buffer=1,
                 nproc=1, catmode="galaxy", pooling="mean", savename=None, finder="caesar", print_progress=True, gaussian=True,
-                rewind=False):
+                rewind=False, checkMetal=False):
     """Do Hostgals
 
     This is the user-interfacing method to run the host galaxy searching.
@@ -572,6 +599,11 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         gasCoords = gasCoords_pre[hasLaunched]
         gasIDs = gasIDs_pre[hasLaunched]
         LLPs = LLP_arr[hasLaunched]
+        
+        gasZArr = None
+        if checkMetal:
+            gasZArr = [gasData["PartType0",f"Metallicity_{i:02}"].value[hasLaunched] for i in [0,1,2,6]] # C, O, Si, Mg
+
         if rewind:
             LLT_arr = gasData["PartType0","LastLaunchPos"].value
             LLTs = LLT_arr[hasLaunched]
@@ -688,7 +720,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                           DYDZ, r_search, lbox, counter, maxCountGal, 
                           gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
                           smoothlength_factor, ion_i_lines, f, gaussian, rewind, 
-                          LLTArg, snapFile, galVel)
+                          LLTArg, snapFile, galVel, checkMetal, gasZArr)
                 #argument to pass into __part__
 
                 # staring multiprocessing
