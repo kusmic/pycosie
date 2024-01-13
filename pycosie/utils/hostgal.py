@@ -116,7 +116,7 @@ def __check__metal(ion, gasZ, gas_idx, threshhold=0.0):
         metal_i = 6
         gasz_i = 3
         
-    Z = gasZ[gasZ_i][gas_idx]
+    Z = gasZ[gasz_i][gas_idx]
     if Z > threshold:
         return True
     else:
