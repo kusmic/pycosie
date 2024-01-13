@@ -308,8 +308,6 @@ class GalaxyGridDataset():
         Rvir = ds.arr(Rvir_p, "kpc")
     
         return(Rvir)
-    
-    def __run__(self):
         
         
 #
