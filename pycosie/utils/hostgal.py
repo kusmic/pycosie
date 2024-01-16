@@ -100,7 +100,7 @@ def __print_complete(counter, N):
     percentage = f"..... {percent} launched particles processed"
     print(percentage, end="\r")
     
-def __check__metal(ion, gasZ, gas_idx, threshhold=0.0):
+def __check__metal(ion, gasZ, gas_idx, threshold=0.0):
     metal_i = -9
     gasz_i = -9
     if "C" == ion[0]:
