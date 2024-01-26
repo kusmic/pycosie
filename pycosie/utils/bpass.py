@@ -96,7 +96,8 @@ class BPASSSpectrum():
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxLowerZ]}.dat")
             spectraH = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxHigherZ]}.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>logAge).flatten()[0]
+            print("DEBUG", logAge, np.argwhere(spectra_logageVal_arr>=logAge).flatten())
+            idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
             
             wlBPASS = spectaL.WL
@@ -120,7 +121,7 @@ class BPASSSpectrum():
         elif outLo:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.zem5.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>self.tstar).flatten()[0]
+            idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
             wlBPASS = spectaL.WL
@@ -137,7 +138,7 @@ class BPASSSpectrum():
         elif outHi:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z040.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>self.tstar).flatten()[0]
+            idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
             wlBPASS = spectaL.WL
