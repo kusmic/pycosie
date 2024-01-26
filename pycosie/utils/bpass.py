@@ -153,6 +153,13 @@ class BPASSSpectrum():
             
             self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
             
+        # scaling luminosity assuming L ~ M**a
+        # for now a = 1
+        a = 1
+        massBpass = 1e6 * u.Msun
+        massRatio = self.Mstar / massBpass.to(u.Msun).value
+        self._spectrum = self._spectrum * massRatio * a
+        
         if wl_arr == "bpass":
             self.WL = wlBPASS
         elif wl_arr != "bpass":
