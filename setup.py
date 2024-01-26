@@ -77,5 +77,6 @@ setup(
         "astropy",
         "h5py",
         "Cython==3.0.0a11",
+        "numba",
     ]
 )
