@@ -1,5 +1,6 @@
 import numpy as np
 from hoki import load
+from numba import jit
 #from hoki.spec import bin_luminosity
 from scipy.interpolate import interp1d
 import astropy.units as u 
