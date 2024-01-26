@@ -161,7 +161,11 @@ class BPASSSpectrum():
             wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
             print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
-            wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
+            # FAKE DATA SET
+            a = np.linspace(0,10,9, dtype=float)
+            b = np.array([a, 3**a+5])
+            bin = (-0.5, 10.5, 10)
+            wlSpecNew = bin_luminosity(a, b, bins=bin)
             self._spectrum = wlSpecNew[1]
             
     def get_spectrum(self, units="esAc", dist_norm=10.0*u.pc):
