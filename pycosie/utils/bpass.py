@@ -1,6 +1,6 @@
 import numpy as np
 from hoki import load
-from numba import jit, typeof
+from numba import jit, typeof, cfunc
 import numbers
 #from hoki.spec import bin_luminosity
 from scipy.interpolate import interp1d
@@ -159,8 +159,9 @@ class BPASSSpectrum():
             dWLCloudy = np.gradient(self.WL)/2 # SHOULD BE CLOUDY OR CUSTOM WAVELENGTH ARR'
             _wlLower = self.WL - dWLCloudy
             wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
-            print("DEBUG", typeof(self.WL), typeof(self._spectrum.to(u.Lsun/u.AA).value), typeof(wlEdges))
-            wlSpecNew = bin_luminosity(wlBPASS, np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value]), bins=wlEdges)
+            modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
+            print("DEBUG", typeof(self.WL), typeof(modArr), typeof(wlEdges))
+            wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             
     def get_spectrum(self, units="esAc", dist_norm=10.0*u.pc):
@@ -265,6 +266,10 @@ def bin_luminosity(wl, spectra, bins=10):
     return wl_new, spectra_new
 
 
+
+#ArrA = "array(float64, 1d, A)"
+#ArrB = "array(float64, 1d, A)"
+#@cfunc
 @jit(nopython=True, nogil=True, cache=True)
 def _binwise_trapz_sorted(x, y, bin_edges):
     """
