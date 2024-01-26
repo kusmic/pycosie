@@ -349,7 +349,7 @@ def _binwise_trapz_sorted(x, y, bin_edges):
 
     return res
 
-@jit(nopython=True, nogil=True, cache=True)
+#@jit(nopython=True, nogil=True, cache=True)
 def _bin_edge_wl(wl, reverse_average=False):
     """
     Find the edges of the wavelength array assuming the given wavelength
