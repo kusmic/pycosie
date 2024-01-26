@@ -104,16 +104,16 @@ class BPASSSpectrum():
             
             LT = spectra_logageStr_arr[idxLowerT]
             yLT = np.array([spectraL[LT], spectraH[LT]])
-            specLT_interp = interp1d(x, yLT)
-            specLT = specLT_interp(self.zstar, axis=0)
+            specLT_interp = interp1d(x, yLT, , axis=0)
+            specLT = specLT_interp(self.zstar)
             
             LT = spectra_logageStr_arr[idxHigherT]
             yLT = np.array([spectraL[LT], spectraH[LT]])
-            specLT_interp = interp1d(x, yLT)
-            specHT = specLT_interp(self.zstar, axis=0)
+            specLT_interp = interp1d(x, yLT, axis=0)
+            specHT = specLT_interp(self.zstar)
             
             y = np.array(specLT, specHT)
-            spec_interp = interp1d(age,y)
+            spec_interp = interp1d(age,y, axis=0)
             
             self._spectrum = spec_interp(np.log10(self.tstar, axis=0)) * u.Lsun / u.AA
             
@@ -130,9 +130,9 @@ class BPASSSpectrum():
             HT = spectra_logageStr_arr[idxHigherT]
             
             y = np.array(spectraL[LT], spectraL[HT])
-            spec_interp = interp1d(age,y)
+            spec_interp = interp1d(age,y, axis=0)
             
-            self._spectrum = spec_interp(np.log10(self.tstar, axis=0)) * u.Lsun / u.AA
+            self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
             
         elif outHi:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z040.dat")
@@ -147,9 +147,9 @@ class BPASSSpectrum():
             HT = spectra_logageStr_arr[idxHigherT]
             
             y = np.array(spectraL[LT], spectraL[HT])
-            spec_interp = interp1d(age,y)
+            spec_interp = interp1d(age,y, axis=0)
             
-            self._spectrum = spec_interp(np.log10(self.tstar, axis=0)) * u.Lsun / u.AA
+            self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
             
         if wl_arr == "bpass":
             self.WL = wlBPASS
