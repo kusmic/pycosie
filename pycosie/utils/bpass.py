@@ -157,12 +157,10 @@ class BPASSSpectrum():
             self.WL = wlBPASS
         elif wl_arr != "bpass":
             wlEdges = _bin_edge_wl(self.WL, reverse_average=False)
+            #A = np.argwhere(wlBPASS<=self.WL[0]).flatten()[-1]
+            #B = np.argwhere(wlBPASS>=self.WL[-1]).flatten()[0]
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
             print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
-            # FAKE DATA SET
-            a = np.linspace(0,10,9, dtype=float)
-            b = np.array([a, 3**a+5])
-            bin = (-0.5, 10.5, 10)
             wlSpecNew = bin_luminosity(a, b, bins=bin)
             self._spectrum = wlSpecNew[1]
             
