@@ -103,12 +103,12 @@ class BPASSSpectrum():
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
-            yLT = np.array([spectraL[LT].values, spectraH[LT].values])
+            yLT = np.array([spectraL[LT].to_numpy(), spectraH[LT].to_numpy()])
             specLT_interp = interp1d(x, yLT, axis=0)
             specLT = specLT_interp(self.zstar)
             
             LT = spectra_logageStr_arr[idxHigherT]
-            yLT = np.array([spectraL[LT].values, spectraH[LT].values])
+            yLT = np.array([spectraL[LT].to_numpy(), spectraH[LT].to_numpy()])
             specLT_interp = interp1d(x, yLT, axis=0)
             specHT = specLT_interp(self.zstar)
             
@@ -129,7 +129,7 @@ class BPASSSpectrum():
             LT = spectra_logageStr_arr[idxLowerT]
             HT = spectra_logageStr_arr[idxHigherT]
             
-            y = np.array([spectraL[LT].values, spectraL[HT].values])
+            y = np.array([spectraL[LT].to_numpy(), spectraL[HT].to_numpy()])
             spec_interp = interp1d(age,y, axis=0)
             
             self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
@@ -146,7 +146,7 @@ class BPASSSpectrum():
             LT = spectra_logageStr_arr[idxLowerT]
             HT = spectra_logageStr_arr[idxHigherT]
             
-            y = np.array([spectraL[LT].values, spectraL[HT].values])
+            y = np.array([spectraL[LT].to_numpy(), spectraL[HT].to_numpy()])
             spec_interp = interp1d(age,y, axis=0)
             
             self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
