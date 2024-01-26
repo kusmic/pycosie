@@ -156,6 +156,7 @@ class BPASSSpectrum():
             dWLCloudy = np.gradient(self.WL)/2 # SHOULD BE CLOUDY OR CUSTOM WAVELENGTH ARR'
             _wlLower = self.WL - dWLCloudy
             wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
+            print("DEBUG", wlBPASS.shape, self._spectrum.shape)
             wlSpecNew = bin_luminosity(wlBPASS, self._spectrum, bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             
