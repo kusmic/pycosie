@@ -95,7 +95,6 @@ class BPASSSpectrum():
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxLowerZ]}.dat")
             spectraH = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxHigherZ]}.dat")
             
-            print("DEBUG", logAge, np.argwhere(spectra_logageVal_arr>=logAge).flatten())
             idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
             
@@ -104,7 +103,7 @@ class BPASSSpectrum():
             
             LT = spectra_logageStr_arr[idxLowerT]
             yLT = np.array([spectraL[LT], spectraH[LT]])
-            specLT_interp = interp1d(x, yLT, , axis=0)
+            specLT_interp = interp1d(x, yLT, axis=0)
             specLT = specLT_interp(self.zstar)
             
             LT = spectra_logageStr_arr[idxHigherT]
