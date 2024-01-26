@@ -156,9 +156,7 @@ class BPASSSpectrum():
         if wl_arr == "bpass":
             self.WL = wlBPASS
         elif wl_arr != "bpass":
-            dWLCloudy = np.gradient(self.WL)/2 # SHOULD BE CLOUDY OR CUSTOM WAVELENGTH ARR'
-            _wlLower = self.WL - dWLCloudy
-            wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
+            wlEdges = _bin_edge_wl(self.WL, reverse_average=False)
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
             print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
             # FAKE DATA SET
@@ -352,3 +350,81 @@ def _binwise_trapz_sorted(x, y, bin_edges):
             res[:, j] += (x2-x[i2])*(y2+y[:, i2])/2
 
     return res
+
+@jit(nopython=True, nogil=True, cache=True)
+def _bin_edge_wl(wl, reverse_average=False):
+    """
+    Find the edges of the wavelength array assuming the given wavelength
+    values are the central values for these bins.
+    
+    This is done by saying the wavelength is a function of index i, wl(i)
+    and assuming it's a function and i is uniform, finds average values
+    using the integral average theorem to get the value at i+0.5:
+    <wl>(i+0.5) = (i+1-i)**-1 * integral_i^i+1( wl(i)di )
+    Edge cases (0 and N) will approximate as a linear change:
+    wl(-0.5) = wl(0) - <wl>(0.5)
+    wl(N+0.5) = wl(N) + <wl>(N-0.5).
+    
+    Numerically, the points between i -> i+1 can approximate as linear, the function
+    between i and i+1 is linear, the integral is a line. If we map j of [0,1] to be the
+    unique linear equation between i and i+1 (you can think of this as a transform j(eta)=eta-1 for
+    eta of [i,i+1] that takes into account all real numbers in between):
+    <wl_i>(0.5) = integral_0^1( [A_i * j + c_i]dj )
+    for unique values A_i between i and i+1 with unique constants c_i similarly. Keep in mind that
+    there should be a perfect map between wl(i+j) and wl_i(j) between [i,i+1]. This evaluates to:
+    [ A_i*(1)**2 + c_i*(1) ] - [ A_i*0**2 + c_i(0)]
+    Reducing to:
+    A_i + c_i
+    So the integral solves out to be:
+    <wl> = A_i+c_i
+    
+     Now to solve for A_i and c_i. Remember perfect mapping, so wl(i) = wl_i(0):
+     c_i = wl(i)
+     Knowing that and the other map wl(i+1) = wl_i(1):
+     wl(i+1) = A_i + c_i
+     A_i = wl(i+1) - c_i
+     So the integral turns into:
+     wl(i+0.5) = wl_i(0.5) = 0.5*A_i + c
+     = (wl(i+1)-wl(i))/2 + wl(i)
+     Or 
+     <wl> = wl(i) + diff_wl(i)/2
+     
+     Note to samir, you want to do np.diff (N-1), go i from range(1,len(wlbins)-1) and do:
+     wl_bin[i] = wl[i-1] + dwl[i-1]/2
+     , then find edge cases
+     which should be
+     wl_bin(0) = wl(0) - np.diff(wl)[0]
+     wl_bin(N) = wl(N) + np.diff(wl)[N-1]
+    
+    However, the same can be said if we reverse the order, so for bins of unequal widths,
+    the idea is to do from intended order, then reverse order, and average. :)
+    I don't really know why, I'm just tired. ORIGINAL GETS BETWEEN i AND i+1, REVERSE_
+    AVERAGE IS FOR... SMOOTHING??? ORIGINAL SOUNDS MORE REASONABLE IF WE THINK CCD PIXELS.
+    AND NO, LSF NOT ACCOUNTED FOR.
+
+    Args:
+        wl (numpy.nmdarray(N)):
+            wavelength array
+        reverse_average(bool):
+            Boolean that if true, will the the operation in reverse order and average the two
+            bin edges to return that. Default is False.
+
+    Returns:
+        numpy.ndarray(N+1): Bins of the wavelength array 
+    """
+    
+    wl_bins = np.zeros(wl.size+1, dtype=float)
+    dwl = np.diff(wl)
+    for i in range(1,len(wl_bins)-1):
+        wl_bins[i] = wl[i-1] + dlw[i-1]/2
+    wl_bins[0] = wl[0]-dwl[0]
+    wl_bins[-1] = wl[-1]-dwl[-2]
+    if reverse_average == True:
+        wl_binsR = np.zeros(wl.size+1, dtype=float)
+        for i in range(1,len(wl_bins)-1):
+            wl_bins[i] = wl[i+1] - dlw[i+1]/2
+        wl_binsR[0] = wl[0]-dwl[0]
+        wl_bins[-1] = wl[-1]-dwl[-2]
+        
+        wl_bins = (wl_bins+wl_binsR)/2
+    return wl_bins
