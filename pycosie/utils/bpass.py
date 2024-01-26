@@ -1,9 +1,8 @@
 import numpy as np
 from hoki import load
-from hoki.spec import dopcor, bin_luminosity
+from hoki.spec import bin_luminosity
 from scipy.interpolate import interp1d
 import astropy.units as u 
-import astropy.constants as c 
 
 
 # Need to add bin_luminosity so spectrum binned to Cloudy wavelengths
@@ -100,7 +99,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
             
-            wlBPASS = spectaL.WL
+            wlBPASS = spectraL.WL
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -124,7 +123,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
-            wlBPASS = spectaL.WL
+            wlBPASS = spectraL.WL
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -141,7 +140,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
-            wlBPASS = spectaL.WL
+            wlBPASS = spectraL.WL
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -161,7 +160,7 @@ class BPASSSpectrum():
             wlSpecNew = bin_luminosity(wlBPASS, self._spectrum, bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             
-    def get_spectrum(units="esAc", dist_norm=10.0*u.pc):
+    def get_spectrum(self, units="esAc", dist_norm=10.0*u.pc):
         """_summary_
 
         Args:
