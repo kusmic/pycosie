@@ -103,12 +103,12 @@ class BPASSSpectrum():
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
-            yLT = np.array([spectraL[LT], spectraH[LT]])
+            yLT = np.array([spectraL[LT].values, spectraH[LT].values])
             specLT_interp = interp1d(x, yLT, axis=0)
             specLT = specLT_interp(self.zstar)
             
             LT = spectra_logageStr_arr[idxHigherT]
-            yLT = np.array([spectraL[LT], spectraH[LT]])
+            yLT = np.array([spectraL[LT].values, spectraH[LT].values])
             specLT_interp = interp1d(x, yLT, axis=0)
             specHT = specLT_interp(self.zstar)
             
@@ -129,7 +129,7 @@ class BPASSSpectrum():
             LT = spectra_logageStr_arr[idxLowerT]
             HT = spectra_logageStr_arr[idxHigherT]
             
-            y = np.array([spectraL[LT], spectraL[HT]])
+            y = np.array([spectraL[LT].values, spectraL[HT].values])
             spec_interp = interp1d(age,y, axis=0)
             
             self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
@@ -146,7 +146,7 @@ class BPASSSpectrum():
             LT = spectra_logageStr_arr[idxLowerT]
             HT = spectra_logageStr_arr[idxHigherT]
             
-            y = np.array([spectraL[LT], spectraL[HT]])
+            y = np.array([spectraL[LT].values, spectraL[HT].values])
             spec_interp = interp1d(age,y, axis=0)
             
             self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
@@ -157,7 +157,7 @@ class BPASSSpectrum():
             dWLCloudy = np.gradient(self.WL)/2 # SHOULD BE CLOUDY OR CUSTOM WAVELENGTH ARR'
             _wlLower = self.WL - dWLCloudy
             wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
-            print("DEBUG", wlBPASS.shape, self._spectrum.shape)
+            print("DEBUG", type(self.WL))
             wlSpecNew = bin_luminosity(wlBPASS, np.array([self._spectrum]), bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             
