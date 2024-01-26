@@ -291,7 +291,7 @@ def _binwise_trapz_sorted(x, y, bin_edges):
     res : `numpy.ndarray` (N, N_bins)
         Integral over each bin of each row of `y`.
     """
-    res = np.empty((y.shape[0], len(bin_edges)-1))
+    res = np.empty((y.shape[1], len(bin_edges)-1))
 
     i1 = 0
     i2 = 0
