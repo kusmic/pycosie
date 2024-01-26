@@ -267,10 +267,11 @@ def bin_luminosity(wl, spectra, bins=10):
 
 
 
-#ArrA = "array(float64, 1d, A)"
-#ArrB = "array(float64, 1d, A)"
-#@cfunc
-@jit(nopython=True, nogil=True, cache=True)
+ArrA = "array(float64, 1d, A)"
+ArrB = "array(float64, 2d, C)"
+ArrC = "array(float64, 1d, C)"
+#@jit(nopython=True, nogil=True, cache=True)
+@cfunc(f"{ArrA}({ArrB},{ArrC})")
 def _binwise_trapz_sorted(x, y, bin_edges):
     """
     Trapezoidal integration over bins.
