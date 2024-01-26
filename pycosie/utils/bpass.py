@@ -160,7 +160,7 @@ class BPASSSpectrum():
             _wlLower = self.WL - dWLCloudy
             wlEdges = np.append(_wlLower, self.WL[-1] + dWLCloudy[-1])
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
-            print("DEBUG", typeof(self.WL), typeof(modArr), typeof(wlEdges))
+            print("DEBUG", typeof(self.WL[10]), typeof(modArr[10,10]), typeof(wlEdges[10]))
             wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             
@@ -271,7 +271,7 @@ def bin_luminosity(wl, spectra, bins=10):
 #ArrB = "array(float64, 2d, C)"
 #ArrC = "array(float64, 1d, C)"
 #@cfunc(f"{ArrA}({ArrB},{ArrC})")
-@jit#(nopython=True, nogil=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _binwise_trapz_sorted(x, y, bin_edges):
     """
     Trapezoidal integration over bins.
