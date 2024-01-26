@@ -114,7 +114,7 @@ class BPASSSpectrum():
             y = np.array([specLT, specHT])
             spec_interp = interp1d(age,y, axis=0)
             
-            self._spectrum = spec_interp(np.log10(self.tstar, axis=0)) * u.Lsun / u.AA
+            self._spectrum = spec_interp(np.log10(self.tstar)) * u.Lsun / u.AA
             
         elif outLo:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.zem5.dat")
