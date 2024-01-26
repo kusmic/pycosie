@@ -89,14 +89,15 @@ class BPASSSpectrum():
         # more complex because have to interpolate on metallicity and age
         spectra_logageVal_arr = np.arange(6.0, 11.1, 0.1) # these are default age range for BPASS v2.2.1
         spectra_logageStr_arr = np.array([f"{x:.1f}" for x in spectra_logageVal_arr], dtype=str) # converting to string for pandas headers
+        logAge = np.log10(self.tstar)
         if not outLo and not outHi:
             #idxHigherZ = np.argwhere(bpass_Zval_arr>self.zstar).flatten()[0]
             #idxLowerZ = np.argwhere(bpass_Zval_arr<self.zstar).flatten()[-1]
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxLowerZ]}.dat")
             spectraH = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxHigherZ]}.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>self.tstar).flatten()[0]
-            idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
+            idxHigherT = np.argwhere(spectra_logageVal_arr>logAge).flatten()[0]
+            idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
             
             wlBPASS = spectaL.WL
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
