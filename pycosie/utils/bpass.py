@@ -414,7 +414,7 @@ def _bin_edge_wl(wl, reverse_average=False):
     wl_bins = np.zeros(wl.size+1, dtype=float)
     dwl = np.diff(wl)
     for i in range(1,len(wl_bins)-1):
-        wl_bins[i] = wl[i-1] + dlw[i-1]/2
+        wl_bins[i] = wl[i-1] + dwl[i-1]/2
     wl_bins[0] = wl[0]-dwl[0]
     wl_bins[-1] = wl[-1]-dwl[-2]
     if reverse_average == True:
