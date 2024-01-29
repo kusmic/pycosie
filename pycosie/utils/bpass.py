@@ -173,8 +173,8 @@ class BPASSSpectrum():
             #B = np.argwhere(wlBPASS>=self.WL[-1]).flatten()[0]
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
             #print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
-            wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
-            self._spectrum = wlSpecNew[1]
+            __, wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
+            self._spectrum = wlSpecNew[1] * u.Lsun / u.AA
             
     def get_spectrum(self, units="esAc", dist_norm=10.0*u.pc):
         """_summary_
@@ -190,10 +190,8 @@ class BPASSSpectrum():
             return self._spectrum
         elif units == "esAc":
             norm = 4 * np.pi * dist_norm.to(u.cm)**2
-            # Keeps saying 1/cm2 is a column density by default. I'm
-            # forcing this to comply
-            spec_ = self._spectrum.to(u.Lsun/u.AA).value / norm.to(u.cm**2).value
-            spec_ = spec_ * u.Lsun / u.cm**2 / u.AA
+            spec_ = self._spectrum / norm.to(u.cm**2)
+            #spec_ = spec_ * u.Lsun / u.cm**2 / u.AA
             return(spec_.to(u.erg / u.s / u.cm**2 / u.AA))
         
 ## I'm sorry for copying this from hoki but I need to know what's not working
