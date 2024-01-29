@@ -5,7 +5,7 @@ from trapz import _binwise_trapz_sorted
 
 import numpy as np
 from hoki import load
-from numba import jit, typeof
+# from numba import jit, typeof
 import numbers
 #from hoki.spec import bin_luminosity
 from scipy.interpolate import interp1d
@@ -172,7 +172,7 @@ class BPASSSpectrum():
             #A = np.argwhere(wlBPASS<=self.WL[0]).flatten()[-1]
             #B = np.argwhere(wlBPASS>=self.WL[-1]).flatten()[0]
             modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
-            print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
+            #print("DEBUG", typeof(self.WL[10]), typeof(modArr[1,10]), typeof(wlEdges[10]))
             wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
             self._spectrum = wlSpecNew[1]
             

@@ -4,32 +4,32 @@ import numpy as np
 cimport numpy as np
 
 def _binwise_trapz_sorted(np.ndarray x, np.ndarray y, np.ndarray bin_edges):
-    """
-    Trapezoidal integration over bins.
+    # 
+    # Trapezoidal integration over bins.
 
-    Integrate each row of `y(x)` over each bin defined by `bin_edges` using
-    trapezoidal integration. The values of `bin_edges` do not have to coincide
-    with values given in `x`, the rows of `y` are linearly interpolated
-    correspondingly.
+    # Integrate each row of `y(x)` over each bin defined by `bin_edges` using
+    # trapezoidal integration. The values of `bin_edges` do not have to coincide
+    # with values given in `x`, the rows of `y` are linearly interpolated
+    # correspondingly.
 
-    Parameters
-    ----------
-    x : `numpy.ndarray` (N_x,)
-        `x`-values corresponding to each column of `y`. Assumed to be sorted in
-        ascending or descending order. Integrated values will be negative for
-        descending order.
-    y : `numpy.ndarray` (N, N_x)
-        N functions of `x` evaluated at each of its values.
-    bin_edges : `numpy.ndarray` (N_bins+1,)
-        Edges of the bins over which to perform integration. Assumed to be
-        sorted in same order as `x` and to span a range <= the range spanned by
-        `x`.
+    # Parameters
+    # ----------
+    # x : `numpy.ndarray` (N_x,)
+    #     `x`-values corresponding to each column of `y`. Assumed to be sorted in
+    #     ascending or descending order. Integrated values will be negative for
+    #     descending order.
+    # y : `numpy.ndarray` (N, N_x)
+    #     N functions of `x` evaluated at each of its values.
+    # bin_edges : `numpy.ndarray` (N_bins+1,)
+    #     Edges of the bins over which to perform integration. Assumed to be
+    #     sorted in same order as `x` and to span a range <= the range spanned by
+    #     `x`.
 
-    Returns
-    -------
-    res : `numpy.ndarray` (N, N_bins)
-        Integral over each bin of each row of `y`.
-    """
+    # Returns
+    # -------
+    # res : `numpy.ndarray` (N, N_bins)
+    #     Integral over each bin of each row of `y`.
+    # 
     cdef res = np.empty((y.shape[1], len(bin_edges)-1))
 
     cdef i1 = 0
