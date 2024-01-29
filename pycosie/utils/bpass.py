@@ -272,6 +272,7 @@ def bin_luminosity(wl, spectra, bins=10):
         raise ValueError("Bin edges outside of valid range!")
 
     wl_new = (bins[1:] + bins[:-1])/2
+    print("DEBUG", type(wl), type(spectra), type(bins))
     spectra_new = _binwise_trapz_sorted(wl, spectra, bins) / np.diff(bins)
 
     return wl_new, spectra_new
