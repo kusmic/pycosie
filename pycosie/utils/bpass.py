@@ -189,7 +189,7 @@ class BPASSSpectrum():
         if units == "LsolA":
             return self._spectrum
         elif units == "esAc":
-            norm = 4 * np.pi * dist_norm.to(cm)**2
+            norm = 4 * np.pi * dist_norm.to(u.cm)**2
             spec_ = self._spectrum/norm
             return(spec_.to(u.erg / u.s / u.cm**2 / u.AA))
         
