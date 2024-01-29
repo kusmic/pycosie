@@ -44,6 +44,12 @@ cython_extensions = [
               #library_dirs=["/usr/lib","/usr/lib/x86_64-linux-gnu"],
               libraries=["m"],
               #extra_compile_args=["-march=x86-64"], 
+              ),
+    Extension("trapz", ["./pycosie/utils/trapz.pyx"],
+              include_dirs=[numpy.get_include()],
+              #library_dirs=["/usr/lib","/usr/lib/x86_64-linux-gnu"],
+              libraries=["m"],
+              #extra_compile_args=["-march=x86-64"], 
               )
 ]
 
