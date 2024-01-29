@@ -190,7 +190,10 @@ class BPASSSpectrum():
             return self._spectrum
         elif units == "esAc":
             norm = 4 * np.pi * dist_norm.to(u.cm)**2
-            spec_ = self._spectrum/norm
+            # Keeps saying 1/cm2 is a column density by default. I'm
+            # forcing this to comply
+            spec_ = self._spectrum.to(u.Lsun/u.AA).value / norm.to(u.cm**2).value
+            spec_ = spec_ * u.Lsun / u.cm**2 / u.AA
             return(spec_.to(u.erg / u.s / u.cm**2 / u.AA))
         
 ## I'm sorry for copying this from hoki but I need to know what's not working
