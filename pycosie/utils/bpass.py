@@ -11,8 +11,6 @@ import numbers
 from scipy.interpolate import interp1d
 import astropy.units as u 
 
-from trapz import _binwise_trapz_sorted
-
 
 # Need to add bin_luminosity so spectrum binned to Cloudy wavelengths
 #  
