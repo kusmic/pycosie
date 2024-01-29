@@ -164,7 +164,7 @@ class BPASSSpectrum():
         # for now a = 1
         a = 1
         massBpass = 1e6 * u.Msun
-        massRatio = self.Mstar / massBpass.to(u.Msun).value
+        massRatio = self.mstar / massBpass.to(u.Msun).value
         self._spectrum = self._spectrum * massRatio * a
         
         if wl_arr == "bpass":
