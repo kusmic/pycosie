@@ -1,13 +1,13 @@
 import pyximport
 pyximport.install(setup_args={"script_args" : ["--verbose"]})
 
-from trapz import _binwise_trapz_sorted
+#from trapz import _binwise_trapz_sorted
 
 import numpy as np
 from hoki import load
 # from numba import jit, typeof
 import numbers
-#from hoki.spec import bin_luminosity
+from hoki.spec import bin_luminosity
 from scipy.interpolate import interp1d
 import astropy.units as u 
 
@@ -106,7 +106,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
             
-            wlBPASS = spectraL.WL
+            wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -130,7 +130,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
-            wlBPASS = spectraL.WL
+            wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -147,7 +147,7 @@ class BPASSSpectrum():
             idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
             idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
             
-            wlBPASS = spectraL.WL
+            wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
             
             LT = spectra_logageStr_arr[idxLowerT]
@@ -193,92 +193,95 @@ class BPASSSpectrum():
             spec_ = self._spectrum/norm
             return(spec_.to(u.erg / u.s / u.cm**2 / u.AA))
         
-# I'm sorry for copying this from hoki but I need to know what's not working
-# I keep passing numpy arrays, but numba is complaining it's a pandas.Series SOMEWHERE
-def bin_luminosity(wl, spectra, bins=10):
-    """
-    Bin spectra conserving luminosity.
-
-    Given spectra sampled at certain wavelengths/frequencies will compute their
-    values in given wavelength/frequency bins. These values are bin averages
-    computed using trapezoidal integration, which ensures that the luminosity
-    per bin is conserved. Of course, only downsampling really makes sense here,
-    i.e. the input spectra should be well sampled compared to the desired
-    output bins.
-
-    Effectively converts input spectra to step functions of
-    wavelength/frequency. Note, in particular, that this means that only
-    rectangle rule integration can sensibly be performed on the output
-    spectra. Other integration methods are not meaningful.
-
-    Parameters
-    ----------
-    wl : `numpy.ndarray` (N_wl,)
-        Wavelengths or frequencies at which spectra are known.
-    spectra : `numpy.ndarray` (N, N_wl)
-        The spectra to bin given as L_lambda [Energy/Time/Wavelength] or L_nu
-        [Energy/Time/Frequency] in accordance with `wl`.
-    bins : int or `numpy.ndarray` (N_edges,), optional
-        Either an integer giving the number `N_bins` of desired equal-width
-        bins or an array of bin edges, required to lie within the range given
-        by `wl`. In the latter case, `N_bins=N_edges-1`.
-
-    Returns
-    -------
-    wl_new : `numpy.ndarray` (N_bins,)
-        The wavelength/frequency values to which spectra were binned,
-        i.e. centre bin values.
-    spectra_new : `numpy.ndarray` (N, N_bins)
-        The binned spectra.
-
-    Notes
-    -----
-    For the actual integration, `wl` has to be sorted in ascending or
-    descending order. If this is not the case, `wl` and `spectra` will be
-    sorted/re-ordered. `bins` will always be sorted in the same order as `wl`
-    as it is assumed to generally be relatively small.
-
-    Although the language used here refers to spectra, the primary intended
-    application area, the code can naturally be used to bin any function with
-    given samples, conserving its integral bin-wise.
-    """
-    for arr, ndim in zip([wl, spectra, bins], [[1], [2], [0, 1]]):
-        if np.ndim(arr) not in ndim:
-            raise ValueError("Wrong dimensionality of input arrays.")
-    if spectra.shape[1] != len(wl):
-        raise ValueError("Shapes of `wl` and `spectra` are incompatible.")
-
-    diff = np.diff(wl)
-    if np.all(diff > 0):
-        asc = True
-    elif np.all(diff < 0):
-        asc = False
-    else:
-        if np.any(diff == 0):
-            raise ValueError("Identical values provided in `wl`.")
-        ids = np.argsort(wl)
-        wl = wl[ids]
-        spectra = spectra[:, ids]
-        asc = True
-
-    if isinstance(bins, numbers.Integral):
-        bins = np.linspace(wl[0], wl[-1], num=bins+1)
-    else:
-        if asc:
-            bins = np.sort(bins)
-        else:
-            bins = bins[np.argsort(-1*bins)]
-    if not (np.amax(bins) <= np.amax(wl) and np.amin(bins) >= np.amin(wl)):
-        raise ValueError("Bin edges outside of valid range!")
-
-    wl_new = (bins[1:] + bins[:-1])/2
-    print("DEBUG", type(wl), type(spectra), type(bins))
-    spectra_new = _binwise_trapz_sorted(wl.to_numpy(), spectra, bins) / np.diff(bins)
-
-    return wl_new, spectra_new
-
-
-
+## I'm sorry for copying this from hoki but I need to know what's not working
+## I keep passing numpy arrays, but numba is complaining it's a pandas.Series SOMEWHERE
+#def bin_luminosity(wl, spectra, bins=10, to_cloudy=True):
+#    """
+#    Bin spectra conserving luminosity.
+#
+#    Given spectra sampled at certain wavelengths/frequencies will compute their
+#    values in given wavelength/frequency bins. These values are bin averages
+#    computed using trapezoidal integration, which ensures that the luminosity
+#    per bin is conserved. Of course, only downsampling really makes sense here,
+#    i.e. the input spectra should be well sampled compared to the desired
+#    output bins.
+#
+#    Effectively converts input spectra to step functions of
+#    wavelength/frequency. Note, in particular, that this means that only
+#    rectangle rule integration can sensibly be performed on the output
+#    spectra. Other integration methods are not meaningful.
+#
+#    Parameters
+#    ----------
+#    wl : `numpy.ndarray` (N_wl,)
+#        Wavelengths or frequencies at which spectra are known.
+#    spectra : `numpy.ndarray` (N, N_wl)
+#        The spectra to bin given as L_lambda [Energy/Time/Wavelength] or L_nu
+#        [Energy/Time/Frequency] in accordance with `wl`.
+#    bins : int or `numpy.ndarray` (N_edges,), optional
+#        Either an integer giving the number `N_bins` of desired equal-width
+#        bins or an array of bin edges, required to lie within the range given
+#        by `wl`. In the latter case, `N_bins=N_edges-1`.
+#
+#    Returns
+#    -------
+#    wl_new : `numpy.ndarray` (N_bins,)
+#        The wavelength/frequency values to which spectra were binned,
+#        i.e. centre bin values.
+#    spectra_new : `numpy.ndarray` (N, N_bins)
+#        The binned spectra.
+#
+#    Notes
+#    -----
+#    For the actual integration, `wl` has to be sorted in ascending or
+#    descending order. If this is not the case, `wl` and `spectra` will be
+#    sorted/re-ordered. `bins` will always be sorted in the same order as `wl`
+#    as it is assumed to generally be relatively small.
+#
+#    Although the language used here refers to spectra, the primary intended
+#    application area, the code can naturally be used to bin any function with
+#    given samples, conserving its integral bin-wise.
+#    """
+#    for arr, ndim in zip([wl, spectra, bins], [[1], [2], [0, 1]]):
+#        if np.ndim(arr) not in ndim:
+#            raise ValueError("Wrong dimensionality of input arrays.")
+#    if spectra.shape[0] != len(wl):
+#        raise ValueError("Shapes of `wl` and `spectra` are incompatible.")
+#
+#    diff = np.diff(wl)
+#    if np.all(diff > 0):
+#        asc = True
+#    elif np.all(diff < 0):
+#        asc = False
+#    else:
+#        if np.any(diff == 0):
+#            raise ValueError("Identical values provided in `wl`.")
+#        ids = np.argsort(wl)
+#        wl = wl[ids]
+#        spectra = spectra[:,ids]
+#        asc = True
+#
+#    if isinstance(bins, numbers.Integral):
+#        bins = np.linspace(wl[0], wl[-1], num=bins+1)
+#    else:
+#        if asc:
+#            bins = np.sort(bins)
+#        else:
+#            bins = bins[np.argsort(-1*bins)]
+#    if not (np.amax(bins) <= np.amax(wl) and np.amin(bins) >= np.amin(wl)):
+#        raise ValueError("Bin edges outside of valid range!")
+#
+#    wl_new = (bins[1:] + bins[:-1])/2
+#    print("DEBUG", type(wl), type(spectra), type(bins))
+#    spectra_new = _binwise_trapz_sorted(wl.to_numpy(), spectra, bins) / np.diff(bins)
+#
+#    if to_cloudy:
+#        return wl_new[::-1], spectra_new[:,::-1]
+#    else:
+#        return wl_new, spectra_new
+#
+#
+#
 ##ArrA = "array(float64, 1d, A)"
 ##ArrB = "array(float64, 2d, C)"
 ##ArrC = "array(float64, 1d, C)"
