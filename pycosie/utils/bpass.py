@@ -273,7 +273,7 @@ def bin_luminosity(wl, spectra, bins=10):
 
     wl_new = (bins[1:] + bins[:-1])/2
     print("DEBUG", type(wl), type(spectra), type(bins))
-    spectra_new = _binwise_trapz_sorted(wl, spectra, bins) / np.diff(bins)
+    spectra_new = _binwise_trapz_sorted(wl.to_numpy(), spectra, bins) / np.diff(bins)
 
     return wl_new, spectra_new
 
