@@ -116,6 +116,10 @@ def __check__metal(ion, gasZ, gas_idx, threshold=0.0):
         metal_i = 6
         gasz_i = 3
         
+    if gasz_i == -9:
+        print(f"Metal not found: {ion}")
+        return False
+        
     Z = gasZ[gasz_i][gas_idx]
     if Z > threshold:
         return True
