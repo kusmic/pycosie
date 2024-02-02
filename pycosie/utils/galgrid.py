@@ -57,7 +57,7 @@ class GalaxyGrid():
             __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
             __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
             __sPartID = sp["PartType4","ParticleIDs"].value
-            __sPartZ = sp["PartType4","Metallicity"].value
+            __sPartZ = sp["PartType4","metallicity"].value
             __sPartM = sp["PartType4","Masses"].to("Msun").value
             __sPartT = ds.current_time.to("yr").value-sp["PartType4","StellarFormationTime"][ad_i].value
 
