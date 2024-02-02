@@ -59,7 +59,7 @@ class GalaxyGrid():
             __sPartID = sp["PartType4","ParticleIDs"].value
             __sPartZ = sp["PartType4","metallicity"].value
             __sPartM = sp["PartType4","Masses"].to("Msun").value
-            __sPartT = ds.current_time.to("yr").value-sp["PartType4","StellarFormationTime"][ad_i].value
+            __sPartT = ds.current_time.to("yr").value-sp["PartType4","StellarFormationTime"].value
 
             #print(len(__sPartCoord))
             self.starCount = len(__sPartCoord)
