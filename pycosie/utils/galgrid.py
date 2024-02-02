@@ -57,6 +57,9 @@ class GalaxyGrid():
             __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
             __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
             __sPartID = sp["PartType4","ParticleIDs"].value
+            __sPartZ = sp["PartType4","Metallicity"].value
+            __sPartM = sp["PartType4","Masses"].to("Msun").value
+            __sPartT = ds.current_time.to("yr").value-sp["PartType4","StellarFormationTime"][ad_i].value
 
             #print(len(__sPartCoord))
             self.starCount = len(__sPartCoord)
@@ -137,11 +140,18 @@ class GalaxyGrid():
                 
             self.originPoint = np.array([xMin, yMin, zMin])
             self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
-            self.starParticle = {"id":[], "pos":[]}
+            self.starParticle = {"id":[], "pos":[],"mass":[],"z":[],"age":[]}
             for si in range(len(__sPartCoord)):
                 self.starParticle["id"].append(int(__sPartID[si]))
                 self.starParticle["pos"].append(__sPartCoord[si])
+                self.starParticle["mass"].append(__sPartM[si])
+                self.starParticle["z"].append(__sPartZ[si])
+                self.starParticle["age"].append(__sPartT[si])
+            self.starParticle["id"] = np.array(self.starParticle["id"], dtype=int)
             self.starParticle["pos"] = np.array(self.starParticle["pos"])
+            self.starParticle["mass"] = np.array(self.starParticle["mass"])
+            self.starParticle["z"] = np.array(self.starParticle["z"])
+            self.starParticle["age"] = np.array(self.starParticle["age"])
 
             __gPartSL = sp["PartType0","SmoothingLength"].to("kpccm/h").value #ckpc/h
             __gPartMass =  sp["PartType0","Masses"].to("Msun").value #Msol
