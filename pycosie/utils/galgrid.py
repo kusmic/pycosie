@@ -296,7 +296,7 @@ class GalaxyGridDataset():
                         sleep(1)
                         continue
                     else:
-                        print_prog(prog_counter, totGalNum)
+                        print_prog(proc_counter, totGalNum)
                         sleep(1)
                         break
                     
