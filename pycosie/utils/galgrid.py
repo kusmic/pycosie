@@ -14,8 +14,11 @@ import pickle
 import multiprocessing as mp
 import time
 import sys
+from time import sleep
 
-
+def print_prog(counter):
+    print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
+    
 class GalaxyGrid():
     
     #__recenter = __recenter
@@ -256,10 +259,7 @@ class GalaxyGridDataset():
                 sp = ds.sphere(center, r_s)
                 galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
                 self.galaxyGridsList.append(galGrid)
-                self.galaxyID.append(__skidIDArr[i])
-                print(f"GalaxyGridDataset complete: {i}/{totGalNum}", end='\r', flush=True)
-            print(' ')
-            
+                self.galaxyID.append(__skidIDArr[i])            
             
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
@@ -290,7 +290,15 @@ class GalaxyGridDataset():
                 processes[i].start()
                 
             for p in processes:
-                p.join()
+                while True:
+                    if p.is_alive():
+                        print_prog(proc_counter)
+                        sleep(1)
+                        continue
+                    else:
+                        print_prog(prog_counter)
+                        sleep(1)
+                        break
                     
             for i in range(len(id_list)):
                 temp_id = list(id_list[i])
