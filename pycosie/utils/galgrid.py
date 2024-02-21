@@ -16,7 +16,7 @@ import time
 import sys
 from time import sleep
 
-def print_prog(counter):
+def print_prog(counter, totGalNum):
     print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
     
 class GalaxyGrid():
@@ -292,11 +292,11 @@ class GalaxyGridDataset():
             for p in processes:
                 while True:
                     if p.is_alive():
-                        print_prog(proc_counter)
+                        print_prog(proc_counter, totGalNum)
                         sleep(1)
                         continue
                     else:
-                        print_prog(prog_counter)
+                        print_prog(prog_counter, totGalNum)
                         sleep(1)
                         break
                     
