@@ -259,7 +259,8 @@ class GalaxyGridDataset():
                 sp = ds.sphere(center, r_s)
                 galGrid = GalaxyGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
                 self.galaxyGridsList.append(galGrid)
-                self.galaxyID.append(__skidIDArr[i])            
+                self.galaxyID.append(__skidIDArr[i])
+                print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
             
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
