@@ -304,9 +304,9 @@ class GalaxyGridDataset():
                 temp_id = list(id_list[i])
                 temp_grid = list(grid_list[i])
                 
-                for j in range(len(temp_id)):
-                    self.galaxyID.append(temp_id[j])
-                    self.galaxyGridsList.append(temp_grid[i])
+            for j in range(len(temp_id)):
+                self.galaxyID.append(temp_id[j])
+                self.galaxyGridsList.append(temp_grid[i])
             
                 
     
