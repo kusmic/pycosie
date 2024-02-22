@@ -130,7 +130,7 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
              Hz, h, DXDZ, DYDZ, r_search, lbox, counter, maxCountGal, 
              gal_buffer, N_LLP, pooling, smoothLengthArr, SLfactor, ion_i_lines, f=None, gaussian=True,
-             rewind=False, gasLLTArr=None, ytds=None, galVelArr=None, checkMetal=False, gasZArr=None):
+             rewind=False, gasLLTArr=None, ytds=None, galVelArr=None, checkMetal=False, gasZArr=None, gasSFRArr = None):
     """PART
 
     This non-usable, iteratable function is what is passed to the multiprocessing.Process
@@ -232,6 +232,9 @@ def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr,
             if checkMetal:
                 hasMetal = __check__metal(ion, gasZArr, gi)
                 if not hasMetal:
+                    continue
+            if type(gasSFRArr) != type(None):
+                if gasSFRArr[gi] > 0.0:
                     continue
             sysID = vpmDict[ion]["ID"]
             sysVel = vpmDict[ion]["v"]
@@ -604,6 +607,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
         gasIDs = gasIDs_pre[hasLaunched]
         LLPs = LLP_arr[hasLaunched]
         
+        gasSFR = gasData["PartType0",f"StarFormationRate"].value[hasLaunched]
         gasZArr = None
         if checkMetal:
             gasZArr = [gasData["PartType0",f"Metallicity_{i:02}"].value[hasLaunched] for i in [0,1,2,6]] # C, O, Si, Mg
@@ -724,7 +728,7 @@ def do_hostgals(vpmpath, simpath, caesarpath, r_search, smoothlength_factor=1.0,
                           DYDZ, r_search, lbox, counter, maxCountGal, 
                           gal_buffer, N_LLP, pooling, gasSL[ni[i]:ni[i+1]],
                           smoothlength_factor, ion_i_lines, f, gaussian, rewind, 
-                          LLTArg, snapFile, galVel, checkMetal, gasZArr)
+                          LLTArg, snapFile, galVel, checkMetal, gasZArr, gasSFR)
                 #argument to pass into __part__
 
                 # staring multiprocessing

@@ -273,7 +273,6 @@ class GalaxyGridDataset():
                     temp = GalaxyGrid(skidIDArr[i], sp, ds, grid_length, metals, star_SL_func)
                     gridL.append(temp)
                     counter.value += 1
-                    print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
             
             idxArr = np.linspace(0,totGalNum, nproc+1, dtype=int)
             manager = mp.Manager()
