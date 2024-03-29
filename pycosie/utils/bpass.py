@@ -104,7 +104,7 @@ class BPASSSpectrum():
             spectraH = load.model_output(f"{self.path}/{spectraFile}.z{bpass_Zstr_arr[idxHigherZ]}.dat")
             
             idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
-            idxLowerT = np.argwhere(spectra_logageVal_arr<logAge).flatten()[-1]
+            idxLowerT = np.argwhere(spectra_logageVal_arr<=logAge).flatten()[-1]
             
             wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
