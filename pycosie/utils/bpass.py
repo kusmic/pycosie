@@ -129,8 +129,8 @@ class BPASSSpectrum():
         elif outLo:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.zem5.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
-            idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
+            idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
+            idxLowerT = np.argwhere(spectra_logageVal_arr<=logAge).flatten()[-1]
             
             wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
@@ -146,8 +146,8 @@ class BPASSSpectrum():
         elif outHi:
             spectraL = load.model_output(f"{self.path}/{spectraFile}.z040.dat")
             
-            idxHigherT = np.argwhere(spectra_logageVal_arr>=self.tstar).flatten()[0]
-            idxLowerT = np.argwhere(spectra_logageVal_arr<self.tstar).flatten()[-1]
+            idxHigherT = np.argwhere(spectra_logageVal_arr>=logAge).flatten()[0]
+            idxLowerT = np.argwhere(spectra_logageVal_arr<=logAge).flatten()[-1]
             
             wlBPASS = spectraL.WL.to_numpy()
             age = np.array((spectra_logageVal_arr[idxLowerT],spectra_logageVal_arr[idxHigherT]))
