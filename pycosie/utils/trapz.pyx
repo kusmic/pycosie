@@ -74,7 +74,7 @@ def _binwise_trapz_sorted(np.ndarray x, np.ndarray y, np.ndarray bin_edges):
             res[:, j] = (x2-x1)*(y1+y2)/2
         else:
             # Area from x1 to x(i1+1).
-            print("DEBUG", x[i1+1], x1, y[:, i1+1], y1)
+            # print("DEBUG", x[i1+1], x1, y[:, i1+1], y1)
             res[:, j] = (x[i1+1]-x1)*(y1+y[:, i1+1])/2
             # Add area from x(i1+1) to x(i2-1).
             for i in range(i1+1, i2):
