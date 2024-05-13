@@ -47,7 +47,8 @@ class CLN():
 class Loser():
 
     def __init__(self, fname):
-        l_id, UVmag = np.loadtxt(fname, unpack=True, usecols=(0,41))
+        l_id, UVmagDust, UVmag = np.loadtxt(fname, unpack=True, usecols=(0,25,41))
         self.ids = l_id.astype(int)
         self.UV_mag = UVmag
+        self.UV_mag_dust = UVmagDust
 
