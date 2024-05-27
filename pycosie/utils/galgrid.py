@@ -601,3 +601,34 @@ class VirialGridDataset():
         Rvir = ds.arr(Rvir_p, "kpc")
     
         return(Rvir)
+    
+def make_halo_grids(snapname, statname, grid_length=9, nproc=1, fstar=0.1, deltac = 200.0, metals=None):
+    """_summary_
+
+    Args:
+        snapname (str): Path and name of simulation snapshot
+        statname (str): Path and name of SKID stat file for snapshot
+        grid_length (int, optional): Length of grid cell in cells. Defaults to 64.
+        nproc (int, optional): Number of processors to use. Defaults to 1.
+        fstar (float, optional): Fraction of galaxy stellar mass to halo mass. Defaults to 0.1.
+        deltac (float, optional): Overdensity. Defaults to 200.0.
+        rvir_frac (float, optional): Fraction of virial radius to use for making grid. Defaults to 0.15.
+        metals (array_like[str], optional): Holds string information of shorthand metal names, e.g. "C", "O". If none, then
+        uses a predefined array. Defaults to None.
+        star_SL_func (interp1d, optional): Scipy interp1d function used for smoothing length of star particles. If none,
+        uses a predefined function. Defaults to None.
+
+    Returns:
+        VirialGridDataset: Dataset of grids for halos in snapshot
+    """
+    yt.set_log_level(0)
+    print("Loading snapshots...")
+    ds = yt.load(snapname)
+    print("Loading SKID stat...")
+    skidcat = SkidCatalog(statname, ds)
+    print("Creating galaxy grid dataset...")
+    galGridDs = VirialGridDataset(ds, skidcat, snapname, nproc, fstar, deltac, grid_length, metals)
+    # self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None
+    print("Done.")
+    
+    return galGridDs
