@@ -517,7 +517,7 @@ class VirialGridDataset():
     - galaxyGridsList: list[GalaxyGrid]: Holds GalaxyGrid object for galaxy
     """
     
-    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, rvir_frac, grid_length, metals=None, star_SL_func=None, filedirname=None):
+    def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, grid_length, metals=None, star_SL_func=None, filedirname=None):
 
         __skidIDArr = skidcat.ids
         __skidMstarArr = skidcat.stellar_mass
@@ -531,7 +531,7 @@ class VirialGridDataset():
         if nproc == 1:
             for i in range(totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
-                r_s = rvir_frac * rvir_i.to("kpccm/h")
+                r_s = 1.0 * rvir_i.to("kpccm/h")
                 center = skidcat.pos[i]
                 sp = ds.sphere(center, r_s)
                 galGrid = VirialGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
