@@ -12,7 +12,7 @@ import astropy.constants as c
 from scipy.interpolate import interp1d
 import pickle
 import multiprocessing as mp
-import time
+#import time #used for debugging
 import sys
 from time import sleep
 
