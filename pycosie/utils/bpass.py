@@ -173,6 +173,14 @@ class BPASSSpectrum():
                 modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
                 __, wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
                 self._spectrum = wlSpecNew[1] * u.Lsun / u.AA
+            else:
+                raise RuntimeError("'wl_arr' needs to either an array or 'bpass'.")
+                
+        else:
+            wlEdges = _bin_edge_wl(self.WL, reverse_average=False)
+            modArr = np.array([wlBPASS, self._spectrum.to(u.Lsun/u.AA).value])
+            __, wlSpecNew = bin_luminosity(wlBPASS, modArr, bins=wlEdges)
+            self._spectrum = wlSpecNew[1] * u.Lsun / u.AA
             
     def get_spectrum(self, units="esAc", dist_norm=10.0*u.pc):
         """_summary_
