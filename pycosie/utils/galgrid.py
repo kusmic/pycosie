@@ -428,12 +428,12 @@ class VirialGrid():
 
 
             try:
-                xMin = np.min( __gPartCoord[:,0], __sPartCoord[:,0] ) # getting min and max of each cartesian axis
-                xMax = np.max( __gPartCoord[:,0], __sPartCoord[:,0] )
-                yMin = np.min( __gPartCoord[:,1], __sPartCoord[:,1] )
-                yMax = np.max( __gPartCoord[:,1], __sPartCoord[:,1] )
-                zMin = np.min( __gPartCoord[:,2], __sPartCoord[:,2] )
-                zMax = np.max( __gPartCoord[:,2], __sPartCoord[:,2] )
+                xMin = np.min( __gPartCoord[:,0] ) # getting min and max of each cartesian axis
+                xMax = np.max( __gPartCoord[:,0] )
+                yMin = np.min( __gPartCoord[:,1] )
+                yMax = np.max( __gPartCoord[:,1] )
+                zMin = np.min( __gPartCoord[:,2] )
+                zMax = np.max( __gPartCoord[:,2] )
 
             except ValueError:
                 print("gPx, ",__gPartCoord[:,0])
