@@ -512,8 +512,8 @@ class VirialGrid():
 class VirialGridDataset():
     """
     Arrtibutes:
-    - galaxyID: list[int]: Holds integer galaxy ID from SKID catalog
-    - galaxyGridsList: list[GalaxyGrid]: Holds GalaxyGrid object for galaxy
+    - haloID: list[int]: Holds integer galaxy ID from SKID catalog, matches galaxy
+    - haloGridsList: list[VirialGrid]: Holds VirialGrid object for galaxy
     """
     
     def __init__(self, ds, skidcat, snapname, nproc, fstar, deltac, grid_length, metals=None, star_SL_func=None, filedirname=None):
@@ -534,9 +534,9 @@ class VirialGridDataset():
                 center = skidcat.pos[i]
                 sp = ds.sphere(center, r_s)
                 galGrid = VirialGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
-                self.galaxyGridsList.append(galGrid)
-                self.galaxyID.append(__skidIDArr[i])
-                print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
+                self.haloGridsList.append(galGrid)
+                self.haloID.append(__skidIDArr[i])
+                print(f"HaloGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
             
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
@@ -581,8 +581,8 @@ class VirialGridDataset():
                 temp_grid = list(grid_list[i])
                 
             for j in range(len(temp_id)):
-                self.galaxyID.append(temp_id[j])
-                self.galaxyGridsList.append(temp_grid[i])
+                self.haloID.append(temp_id[j])
+                self.haloGridsList.append(temp_grid[i])
                 
     def __get_rvir(self, Mstar, snapname, ds, fstar, deltac):
         
