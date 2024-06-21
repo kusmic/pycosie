@@ -528,6 +528,7 @@ class VirialGridDataset():
         if type(filedirname) == type(None):
             filedirname = "SOMETHING"
         if nproc == 1:
+            counter = 0
             for i in range(totGalNum): 
                 rvir_i = self.__get_rvir( __skidMstarArr[i], snapname, ds, fstar, deltac) 
                 r_s = 1.0 * rvir_i.to("kpccm/h")
@@ -536,6 +537,8 @@ class VirialGridDataset():
                 galGrid = VirialGrid(__skidIDArr[i], sp, ds, grid_length, metals, star_SL_func) #self, id, dsSphere, ds, gridLength, metals=None, star_SL_func=None
                 self.haloGridsList.append(galGrid)
                 self.haloID.append(__skidIDArr[i])
+                print(f"HaloGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
+                counter += 1
             
         elif nproc > 1:
             def ggproc(idL, gridL, skidIDArr, skidMstarArr, ds, grid_length, metals, star_SL_func, counter):
