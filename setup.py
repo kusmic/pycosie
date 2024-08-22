@@ -82,7 +82,7 @@ setup(
 	    "yt==4.0.1",
         "astropy",
         "h5py",
-        "Cython==3.0.0a11",
+        "Cython",
         "numba",
     ]
 )
