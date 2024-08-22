@@ -34,12 +34,11 @@ python setup.py install
 python setup.py build_ext --inplace
 ```
 
-Otherwise, one can use pip:
+Otherwise, one can use pip. HOWEVER, due to how quickly this software is updated and bugs arise and get squashed, I recommend using the
+first option. I HIGHLY RECOMMEND NOT TO PIP INSTALL AT THE MOMENT. It is only mentioned for completeness:
 
 ```
 pip install pycosie
 ```
-HOWEVER, due to how quickly this software is updated and bugs arise and get squashed, I recommend using the
-first option.
 
 ### Latest Notes
