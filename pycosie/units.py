@@ -8,7 +8,7 @@ import astropy.units as u
 hDefault = 0.6774
 defaultMass = 1.0e10 * u.Msun / hDefault 
 defaultLength = 1.0 * u.kpc / hDefault
-defaultVelocity = 1.o * u.km / u.sec
+defaultVelocity = 1.0 * u.km / u.sec
 
 # These are special, in that they are set by Kristian
 
