@@ -79,10 +79,9 @@ setup(
     install_requires=[
         "numpy",
         "scipy",
-	"yt",
+	    "yt",
         "astropy",
         "h5py",
-        "Cython",
-        "numba",
+        "Cython"
     ]
 )

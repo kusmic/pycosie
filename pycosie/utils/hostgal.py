@@ -125,6 +125,14 @@ def __check__metal(ion, gasZ, gas_idx, threshold=0.0):
         return True
     else:
         return False
+    
+def __coarsegrid_gal(): # so coarse gridding galaxies to then pull closest by grid association
+    pass
+
+def __near_gal(): # getting nearest galaxies based on grid association from coarse grid
+    pass
+
+
 
 def __part__(gasIDArr, gasCoordArr, gasLLPArr, vpmDict, galPosArr, galIDArr, 
              colSpecies, gasIDOut, vpmIDOut, galIDOut, __debugMode__, N, z, 
