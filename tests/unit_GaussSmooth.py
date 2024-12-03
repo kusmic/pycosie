@@ -3,10 +3,12 @@
 from julia import Main
 import numpy as np
 
-# Throw in some known answers to test if will truly be an off-center 
-# gaussian smoothing kernel.
 
-# test 1: one particle in center of a grid, in center of cell. 
+# NOTE: need to run with 'python-jl' command
+# TODO: find a precompiling solution on Julia modules to do 
+# with setup installation
+
+# test 1: one particle in center of the grid, in center of cell. 
 # It is basis to make sure GaussSmooth runs and provides a 
 # uniform kernel as control
 def test1():

@@ -27,11 +27,11 @@ def recenter(np.ndarray coord, np.ndarray domainWidth, double Dx, double Dy, dou
 def gaussErf(double t, double a, double b, double sigma):
     cdef float C = 0.707107
     # original
-    #cdef double xa = (t-a)/(sqrt(2)*sigma)
-    #cdef double xb = (t-b)/(sqrt(2)*sigma)
+    cdef double xa = (t-a)/(sqrt(2)*sigma)
+    cdef double xb = (t-b)/(sqrt(2)*sigma)
     # test
-    cdef double xa = (t-a)
-    cdef double xb = (t-b)
+    #cdef double xa = (t-a)
+    #cdef double xb = (t-b)
     
     cdef double soln # will hold the definite integral quantity
     if ( np.abs(xa) < 5*sqrt(2) ) and ( np.abs(xb) < 5*sqrt(2) ): # grid edges not 5-sigma away from particle + smoothing length
