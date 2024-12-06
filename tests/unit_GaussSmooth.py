@@ -29,6 +29,7 @@ def test1(retval=False, plot=True): # retval: return the test gaussian grid for 
     if plot==True:
         plt.imshow(testGauss[10,:,:]) # central slice in i(x) index
         plt.title("Test1")
+        plt.colorbar()
         plt.show()
     if retval==False:
         return None
@@ -41,7 +42,7 @@ def test2(retval=False, plot=True): # retval: return the test gaussian grid for 
     testL = 10.0 # test length
     testGrid = np.zeros([21,21,21]) # gotta be odd to have center be cell
     dL = testL/testGrid.shape[0]
-    testCoord = np.array([testL/2, 8.4*dL, 8.1*dL]) # 5 will be center 
+    testCoord = np.array([testL/2, testL/2 + 0.45*dL, testL/2]) # 5 will be center 
     sphToGauss = 0.33479
     testSL = 1.0 / sphToGauss # so sigma = 1
     # if 5 sigma limit true on code, values should barely
@@ -54,6 +55,7 @@ def test2(retval=False, plot=True): # retval: return the test gaussian grid for 
     if plot==True:
         plt.imshow(testGauss[10,:,:]) # central slice in i(x) index
         plt.title("Test2")
+        plt.colorbar()
         plt.show()
     if retval==False:
         return None
@@ -78,6 +80,7 @@ def test3(retval=False, plot=True):
     if plot==True:
         plt.imshow(testGauss[10,:,:]) # central slice in i(x) index
         plt.title("Test3")
+        plt.colorbar()
         plt.show()
     if retval==False:
         return None
@@ -87,10 +90,11 @@ def test3(retval=False, plot=True):
 
 if __name__ == "__main__": 
     # run the code and can switch out which functions you are using
-    #g1 = test1(retval=True, plot=True)
-    #g2 = test2(retval=True, plot=True)
-    g3 = test3(retval=True, plot=True)
-    #result = g1 - g2
-    #plt.imshow(result[10,:,:])
-    #plt.title("Residual")
-    #plt.show()
+    g1 = test1(retval=True, plot=True)
+    g2 = test2(retval=True, plot=True)
+    #g3 = test3(retval=True, plot=True)
+    result = g1 - g2
+    plt.imshow(result[10,:,:])
+    plt.title("Residual")
+    plt.colorbar()
+    plt.show()
