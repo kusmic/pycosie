@@ -5,8 +5,9 @@
 #         a test value to make sure it's working
 
 using PyCall
-using NumPyArrays
 using SpecialFunctions
+
+# TODO: convert any NumPyArrays usage to convert
 
 np = pyimport("numpy")
 
@@ -15,14 +16,14 @@ function recenter(coord, domainWidth, Dx::Float64, Dy::Float64, Dz::Float64)
     I forgot what this is for. It's legacy code that I'm scared to delete.
     """
     # First converting to Julia types
-    coordJl = NumPyArray(coord)
-    domWidthJl = NumPyArray(domainWidth)
+    coordJl = convert(Array, coord)
+    domWidthJl = convert(Array, domainWidth)
 
     recenterArr = [0,0,0]
     # REMEMBER julia is 1-indexing
     X = coord.shape[1]
     Y = coord.shape[2]
-    tempCoord::NumPyArray = NumPyArray(np.zeros((X,Y)))
+    tempCoord::Array = convert(Array, np.zeros((X,Y)))
     # recentering 
     if Dx > domWidthJl[1]/2
         recenterArr[1] = domWidthJl[1]
@@ -37,9 +38,9 @@ function recenter(coord, domainWidth, Dx::Float64, Dy::Float64, Dz::Float64)
     for gi = 1:length(coordJl)
         for qi in 1:length(recenterArr)
             check = coord[gi,qi] < recenterArr[qi]
-            if check:
+            if check
                 tempCoord[gi,qi] = coordJl[gi,qi] + recenterArr[qi]
-            else:
+            else
                 tempCoord[gi,qi] = coordJl[gi,qi]
             end
         end
@@ -97,17 +98,20 @@ function gaussLoop(gL::Int64, testCoord, testSL::Float64, L::Float64)
         gaussKernel (numpy.array): The Gaussian kernel
     """#
 
-    gaussKernel::NumPyArray = NumPyArray( np.zeros((gL,gL,gL)) )
-    Edges::NumPyArray = NumPyArray( np.linspace(0,L,gL+1) )
+    gaussKernel::Array = convert(Array, np.zeros((gL,gL,gL)) )
+    Edges::Array = convert(Array, np.linspace(0,L,gL+1) )
     SPHtoGauss::Float64 = 0.33479
     sigma::Float64 = SPHtoGauss * testSL
-    dLimLo::NumPyArray = NumPyArray(testCoord - (5*sigma))
-    dLimHi::NumPyArray = NumPyArray(testCoord + (5*sigma))
+    dLimLo::Array = convert(Array, testCoord )
+    dLimLo = dLimLo - (5*sigma)*[1,1,1]
+    dLimHi::Array = convert(Array, testCoord)
+    dLimHi = dLimHi + (5*sigma)*[1,1,1]
     # Gotta find indices of edges s.t. edge < lower limit then edge > higher limit
-    ilo::NumPyArray = NumPyArray(np.argwhere(Edges < dLimLo[1]))
+    #argWhere = pycall(np.argwhere, Array, Edges < dLimLo[1])
+    #ilo::Array = convert(Array, argWhere)
     # i index = x
     imax::Int64 = gL
-    imin::Int64 = 0
+    imin::Int64 = 1
     for __i = 1:length(Edges)
         if Edges[__i] < dLimLo[1]
             if __i > imin 
@@ -124,7 +128,7 @@ function gaussLoop(gL::Int64, testCoord, testSL::Float64, L::Float64)
     end
     # j index = Y
     jmax::Int64 = gL
-    jmin::Int64 = 0
+    jmin::Int64 = 1
     for __j = 1:length(Edges)
         if Edges[__j] < dLimLo[2]
             if __j > jmin 
@@ -141,7 +145,7 @@ function gaussLoop(gL::Int64, testCoord, testSL::Float64, L::Float64)
     end
     # k index = z 
     kmax::Int64 = gL
-    kmin::Int64 = 0
+    kmin::Int64 = 1
     for __k = 1:length(Edges)
         if Edges[__k] < dLimLo[3]
             if __k > kmin 
