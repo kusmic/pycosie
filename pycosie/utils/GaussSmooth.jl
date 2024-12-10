@@ -13,16 +13,26 @@ np = pyimport("numpy")
 
 function recenter(coord, domainWidth, Dx::Float64, Dy::Float64, Dz::Float64)
     """
-    I forgot what this is for. It's legacy code that I'm scared to delete.
+    Found out it's to reccenter the coordinates in the case that the galaxy is
+    at the edge and the gas particles are split by the simulation width
+    Args:
+        coords : array of Nx3 coordinates to be recentered
+        domainWidth : width of space
+        Dx : length in x-axis
+        Dy : length in y_axis
+        Dz: length in z-axis
+    Returns:
+        Coordinates of Nx3 array that is now properly recentered
     """
     # First converting to Julia types
     coordJl = convert(Array, coord)
     domWidthJl = convert(Array, domainWidth)
 
-    recenterArr = [0,0,0]
+    recenterArr::Array{Float64} = [0.0,0.0,0.0]
     # REMEMBER julia is 1-indexing
-    X = coord.shape[1]
-    Y = coord.shape[2]
+    X = size(coordJl, 1)
+    Y = size(coordJl, 2)
+    println(X, Y)
     tempCoord::Array = convert(Array, np.zeros((X,Y)))
     # recentering 
     if Dx > domWidthJl[1]/2
@@ -35,9 +45,10 @@ function recenter(coord, domainWidth, Dx::Float64, Dy::Float64, Dz::Float64)
         recenterArr[3] = domWidthJl[3]
     end
 
-    for gi = 1:length(coordJl)
+    println(length(coordJl))
+    for gi = 1:size(coordJl,1)
         for qi in 1:length(recenterArr)
-            check = coord[gi,qi] < recenterArr[qi]
+            check = coord[gi,qi] < recenterArr[qi]/2
             if check
                 tempCoord[gi,qi] = coordJl[gi,qi] + recenterArr[qi]
             else
