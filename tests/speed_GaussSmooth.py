@@ -450,3 +450,26 @@ if __name__ == "__main__":
     # running the gridding whether C or Julia
     
     # setting test dataset
+    # using TD pl16.5n704 snapshot 003 for initial tests
+    # please rename the below variable if using different path
+    snapname = "/data1/kfinlator/runs/joker/pl16p5n704/snapdir_003/snap_pl16p5n704_003.0.hdf5"
+    statname = "/data1/samirk/research/pl16p5n704/Gal/gal_003.stat"
+    print("Loading test set...")
+    ds = yt.load(snapname)
+    skidcat = SkidCatalog(statname, ds)
+    
+    print("Beginning Cython run.")
+    ti = datetime.now()
+    test = GalaxyGridDSCython(ds, skidcat, snapname, 1, 0.00316, 200.0, 0.15, 16, None, None)
+    tf = datetime.now()
+    finalTime = ti - tf
+    print("Time for Cython/C++ (sec): ", finalTime.total_seconds())
+    
+    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+    print("Beginning Julia run.")
+    ti = datetime.now()
+    test = GalaxyGridDSJulia(ds, skidcat, snapname, 1, 0.00316, 200.0, 0.15, 16, None, None)
+    tf = datetime.now()
+    finalTime = ti - tf
+    print("Time for Cython/C++ (sec): ", finalTime.total_seconds())
+    
