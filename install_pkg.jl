@@ -7,3 +7,4 @@ using Pkg
 
 Pkg.add("PyCall")
 Pkg.add("Trapz")
+Pkg.add("SpecialFunctions")

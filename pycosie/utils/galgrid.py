@@ -1,7 +1,12 @@
-import pyximport
-pyximport.install(setup_args={"script_args" : ["--verbose"]})
+#import pyximport
+#pyximport.install(setup_args={"script_args" : ["--verbose"]})
 
-from cgauss_smooth import recenter, gaussLoop, gaussErf
+#from cgauss_smooth import recenter, gaussLoop, gaussErf
+
+from julia import Main
+
+Main.include("GaussSmooth.jl")
+# including jullia functions of gaussian smoothing kernel
 
 import numpy as np
 from pycosie.cluster.skid import SkidCatalog
@@ -19,12 +24,7 @@ from time import sleep
 def print_prog(counter, totGalNum):
     print(f"GalaxyGridDataset complete: {int(counter.value)}/{totGalNum}", end='\r', flush=True)
     
-class GalaxyGrid():
-    
-    #__recenter = __recenter
-    #__gridGaussLoop = __gridGaussLoop
-    #__gaussIntgErf = __gaussIntgErf
-    
+class GalaxyGrid():    
     """
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
@@ -174,7 +174,7 @@ class GalaxyGrid():
 
 
             for i in range(len(__gPartCoord)):
-                __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
+                __gaussGrid = Main.gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
                 __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
                 __massGrid = __gPartMass[i]* __gaussGrid
                 __denGrid = __gPartMass[i]* __gaussGrid / dVcell
@@ -377,12 +377,7 @@ def load(filedirname):
     print(f"Loaded data from {filedirname}")
     return ggds
 
-class VirialGrid():
-    
-    #__recenter = __recenter
-    #__gridGaussLoop = __gridGaussLoop
-    #__gaussIntgErf = __gaussIntgErf
-    
+class VirialGrid():    
     """
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
@@ -493,7 +488,7 @@ class VirialGrid():
 
 
             for i in range(len(__gPartCoord)):
-                __gaussGrid = gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
+                __gaussGrid = Main.gaussLoop(gridLength, __gPartCoord[i], __gPartSL[i], L)
                 __mT = __gPartMass[i]* __gaussGrid  * __gPartTemperature[i]
                 __massGrid = __gPartMass[i]* __gaussGrid
                 __denGrid = __gPartMass[i]* __gaussGrid / dVcell
