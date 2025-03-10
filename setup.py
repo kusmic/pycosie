@@ -25,11 +25,11 @@ class sdist(_sdist):
     # subclass setuptools source distribution builder to ensure cython
     # generated C files are included in source distribution.
     # See http://stackoverflow.com/a/18418524/1382869
-    #def run(self):
+    def run(self):
         # Make sure the compiled Cython files in the distribution are up-to-date
     #   from Cython.Build import cythonize
     #    cythonize(cython_extensions)
-    #    _sdist.run(self)
+        _sdist.run(self)
 
 sys.path.insert(0,"pycosie")
 
