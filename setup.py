@@ -34,21 +34,21 @@ class sdist(_sdist):
     #    cythonize(cython_extensions)
         _sdist.run(self)
 
-def copy_julia_files(source_dir, target_dir):
-
-    # Copy Julia files from source to target directory
-    for filename in os.listdir(source_dir):
-        if filename.endswith(".jl") or filename.endswith(".npy"):
-            shutil.copy(os.path.join(source_dir, filename), os.path.join(target_dir, filename))
-            
-class CustomInstallCommand(install):
-            def run(self):
-                # Get target installation directory
-                install_path = os.path.abspath(self.install_lib)
-                
-                # Copy Julia files to the install directory
-                copy_julia_files("./pycosie/utils", install_path)
-                install.run(self)
+#def copy_julia_files(source_dir, target_dir):
+#
+#    # Copy Julia files from source to target directory
+#    for filename in os.listdir(source_dir):
+#        if filename.endswith(".jl") or filename.endswith(".npy"):
+#            shutil.copy(os.path.join(source_dir, filename), os.path.join(target_dir, filename))
+#            
+#class CustomInstallCommand(install):
+#            def run(self):
+#                # Get target installation directory
+#                install_path = os.path.abspath(self.install_lib)
+#                
+#                # Copy Julia files to the install directory
+#                copy_julia_files("./pycosie/utils", install_path)
+#                install.run(self)
 
 sys.path.insert(0,"pycosie")
 
@@ -78,12 +78,12 @@ setup(
     long_description=long_description,
     version="0.1.5",
     packages=find_packages(),
-    package_data={"my_python_package": ["*.jl", "*.npy"]},
+    package_data={"my_package.utils": ["*.jl", "*.npy"]},
     cmdclass={
         'sdist': sdist,
         'build_ext': build_ext,
         'build_py': build_py,
-        "install":CustomInstallCommand
+        #"install":CustomInstallCommand
     },
     #ext_modules = cythonize(cython_extensions, annotate=True), # cythonize to show xython usage and files (pyx, pxd)
     include_dirs=[numpy.get_include()], # need to include numpy in setup, and for cython compile
