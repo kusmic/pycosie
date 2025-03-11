@@ -4,7 +4,10 @@ from setuptools.command.sdist import sdist as _sdist
 from setuptools.command.build_py import build_py as _build_py
 from setuptools.command.build_ext import build_ext as _build_ext
 import numpy
-from Cython.Build import cythonize
+#from Cython.Build import cythonize
+import shutil
+import os
+from setuptools.command.install import install
 
 class build_py(_build_py):
     def run(self):
@@ -30,6 +33,16 @@ class sdist(_sdist):
     #   from Cython.Build import cythonize
     #    cythonize(cython_extensions)
         _sdist.run(self)
+
+def copy_julia_files(source_dir, target_dir):
+
+    # Copy Julia files from source to target directory
+
+    for filename in os.listdir(source_dir):
+
+        if filename.endswith(".jl") or filename.endswith(".npy"):
+
+            shutil.copy(os.path.join(source_dir, filename), os.path.join(target_dir, filename))
 
 sys.path.insert(0,"pycosie")
 
@@ -59,6 +72,7 @@ setup(
     long_description=long_description,
     version="0.1.5",
     packages=find_packages(),
+    package_data={"my_python_package": ["*.jl", "*.npy"]},
     cmdclass={
         'sdist': sdist,
         'build_ext': build_ext,
@@ -83,5 +97,19 @@ setup(
         "astropy",
         "h5py",
         "Cython"
-    ]
+    ],
+    cmdclass={"install":  
+
+        class CustomInstallCommand(install):
+
+            def run(self):
+                # Get target installation directory
+                install_path = os.path.abspath(self.install_lib)
+                
+                # Copy Julia files to the install directory
+                copy_julia_files("./pycosie/utils", install_path)
+                install.run(self)
+
+    }
+
 )
