@@ -82,7 +82,8 @@ setup(
     cmdclass={
         'sdist': sdist,
         'build_ext': build_ext,
-        'build_py': build_py
+        'build_py': build_py,
+        "install":CustomInstallCommand
     },
     #ext_modules = cythonize(cython_extensions, annotate=True), # cythonize to show xython usage and files (pyx, pxd)
     include_dirs=[numpy.get_include()], # need to include numpy in setup, and for cython compile
@@ -104,6 +105,4 @@ setup(
         "h5py",
         "Cython"
     ],
-    cmdclass={"install":CustomInstallCommand}
-
 )
