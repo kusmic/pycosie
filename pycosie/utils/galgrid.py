@@ -2,10 +2,10 @@
 #pyximport.install(setup_args={"script_args" : ["--verbose"]})
 
 #from cgauss_smooth import recenter, gaussLoop, gaussErf
-
+import os
 from julia import Main
-
-Main.include("GaussSmooth.jl")
+pycosiePath = os.path.dirname(os.path.abspath(__file__))
+Main.include(f"{pycosiePath}/pycosie/utils/GaussSmooth.jl")
 # including jullia functions of gaussian smoothing kernel
 
 import numpy as np
