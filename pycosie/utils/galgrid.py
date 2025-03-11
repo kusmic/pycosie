@@ -5,7 +5,7 @@
 import os
 from julia import Main
 pycosiePath = os.path.dirname(os.path.abspath(__file__))
-Main.include(f"{pycosiePath}/pycosie/utils/GaussSmooth.jl")
+Main.include(f"{pycosiePath}/GaussSmooth.jl")
 # including jullia functions of gaussian smoothing kernel
 
 import numpy as np
