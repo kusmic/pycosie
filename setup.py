@@ -37,12 +37,18 @@ class sdist(_sdist):
 def copy_julia_files(source_dir, target_dir):
 
     # Copy Julia files from source to target directory
-
     for filename in os.listdir(source_dir):
-
         if filename.endswith(".jl") or filename.endswith(".npy"):
-
             shutil.copy(os.path.join(source_dir, filename), os.path.join(target_dir, filename))
+            
+class CustomInstallCommand(install):
+            def run(self):
+                # Get target installation directory
+                install_path = os.path.abspath(self.install_lib)
+                
+                # Copy Julia files to the install directory
+                copy_julia_files("./pycosie/utils", install_path)
+                install.run(self)
 
 sys.path.insert(0,"pycosie")
 
@@ -98,16 +104,6 @@ setup(
         "h5py",
         "Cython"
     ],
-    cmdclass={"install":  
-        class CustomInstallCommand(install):
-            def run(self):
-                # Get target installation directory
-                install_path = os.path.abspath(self.install_lib)
-                
-                # Copy Julia files to the install directory
-                copy_julia_files("./pycosie/utils", install_path)
-                install.run(self)
-
-    }
+    cmdclass={"install":CustomInstallCommand}
 
 )
