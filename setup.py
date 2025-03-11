@@ -78,7 +78,8 @@ setup(
     long_description=long_description,
     version="0.1.5",
     packages=find_packages(),
-    package_data={"my_package.utils": ["*.jl", "*.npy"]},
+    include_package_data=True,
+    #package_data={"pycosie.utils": ["*.jl", "*.npy"]},
     cmdclass={
         'sdist': sdist,
         'build_ext': build_ext,
