@@ -117,8 +117,8 @@ class GalaxyGrid():
 
             __domainWidth = ds.domain_width.to("kpccm/h").value
 
-            __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
-            __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
+            __gPartCoord = Main.recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
+            __sPartCoord = Main.recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
 
             xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # calculate new transformed coordinates
             xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
@@ -321,8 +321,8 @@ class TestGalaxyGrid():
 
             __domainWidth = ds.domain_width.to("kpccm/h").value
 
-            __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
-            __sPartCoord = recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
+            __gPartCoord = Main.recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
+            __sPartCoord = Main.recenter(__sPartCoord, __domainWidth, Dx, Dy, Dz)
 
             xMin = np.min( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) ) # calculate new transformed coordinates
             xMax = np.max( np.concatenate((__gPartCoord[:,0], __sPartCoord[:,0])) )
@@ -650,7 +650,7 @@ class VirialGrid():
 
             __domainWidth = ds.domain_width.to("kpccm/h").value
 
-            __gPartCoord = recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
+            __gPartCoord = Main.recenter(__gPartCoord, __domainWidth, Dx, Dy, Dz)
 
             xMin = np.min( __gPartCoord[:,0] ) # calculate new transformed coordinates
             xMax = np.max( __gPartCoord[:,0] )
