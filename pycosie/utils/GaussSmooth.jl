@@ -80,12 +80,12 @@ function gaussErf(t::Float64, a::Float64, b::Float64, sigma::Float64)
     soln::Float64 = 0.0
 
     crit1::Float64 = 5.0 # 5 sigma
-    if (abs(xa) < crit1) & (abs(xb) < crit1) # within 5 sigma
+    if (abs(xa) < crit1) && (abs(xb) < crit1) # within 5 sigma
         A = SpecialFunctions.erf(C*xa)
         B = SpecialFunctions.erf(C*xb)
         soln = 0.5 * (A-B)
     else # somehow not caught in 5 sigma because
-        if t>a & t<b  # inside cell, still do it
+        if t>a && t<b  # inside cell, still do it
             A = SpecialFunctions.erf(C*xa)
             B = SpecialFunctions.erf(C*xb)
             soln = 0.5 * (A-B)
