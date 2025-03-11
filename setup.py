@@ -99,9 +99,7 @@ setup(
         "Cython"
     ],
     cmdclass={"install":  
-
         class CustomInstallCommand(install):
-
             def run(self):
                 # Get target installation directory
                 install_path = os.path.abspath(self.install_lib)
