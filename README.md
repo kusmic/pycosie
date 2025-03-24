@@ -43,7 +43,7 @@ pip install pycosie
 ```
 ### Running
 
-Since it has `pyjulia` implemented it needs different set up to sun. *If it is a source code file*, you can run it as such:
+Since it has `pyjulia` implemented it needs different a set up to run. *If it is a source code file*, you can run it as such:
 
 ```
 python-jl your-code.py <args>
