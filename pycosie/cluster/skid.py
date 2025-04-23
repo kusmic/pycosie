@@ -45,6 +45,7 @@ class SkidCatalog():
                         L = ds.domain_width.to("kpccm/h")[0]
                         volSim = L.to("cmcm")**3
                         massUnit = ds.arr(rho_c.value * volSim.value, "g").to("Msun")
+                        print("MASS UNIT", massUnit)
                         uL = L.to("Mpccm").value * u.Mpc # comoving
                         cmPerMpc = 3.0855e24 * u.cm / u.Mpc
                         cmPerKm = 1e5 * u.cm / u.km
