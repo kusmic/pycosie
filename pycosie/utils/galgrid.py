@@ -29,7 +29,7 @@ class GalaxyGrid():
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
         ["C","O","Si","Fe","N","Ne","Mg","S","Ca","Ti"]
-        - zoomLength: float: side length of square grid in ckpc/h
+        - zoomLength: float: side length of box around whole galaxy in ckpc/h
         - gasDensityGrid: array[float]: Holds density of grid in each cell in units Msun/(ckpc/h)^3
         - gasTemperatureGrid: array[float]: Holds temperature of grid in each cell in units K
         - starParticle: dict(array[int, array]): Dictionary holding star information. Key "id" has integer star particle
@@ -234,7 +234,7 @@ class TestGalaxyGrid():
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
         ["C","O","Si","Fe","N","Ne","Mg","S","Ca","Ti"]
-        - zoomLength: float: side length of square grid in ckpc/h
+        - zoomLength: float: side length of box around whole galaxy in ckpc/h
         - gasDensityGrid: array[float]: Holds density of grid in each cell in units Msun/(ckpc/h)^3
         - gasTemperatureGrid: array[float]: Holds temperature of grid in each cell in units K
         - starParticle: dict(array[int, array]): Dictionary holding star information. Key "id" has integer star particle
@@ -588,7 +588,7 @@ class VirialGrid():
         Attributes:
         - gasMetalMetallicityGrids: dict(array[float]): Stores mass-weighted metallicities of cell. Hardcoded keys are 
         ["C","O","Si","Fe","N","Ne","Mg","S","Ca","Ti"]
-        - zoomLength: float: side length of square grid in ckpc/h
+        - zoomLength: float: side length of box around whole galaxy in ckpc/h
         - gasDensityGrid: array[float]: Holds density of grid in each cell in units Msun/(ckpc/h)^3
         - gasTemperatureGrid: array[float]: Holds temperature of grid in each cell in units K
         - starParticle: dict(array[int, array]): Dictionary holding star information. Key "id" has integer star particle
