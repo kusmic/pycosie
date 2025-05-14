@@ -64,9 +64,12 @@ class SkidCatalog():
                 self.ids = ID.astype(int)
                 self.velocity = ds.arr(velocity * unitVel.value * np.sqrt(a), "cm/s")
                 self.nParticle = npart.astype(int)
-                self.vcmax = ds.arr(vcmax * unitVel * a, "cm/s") # maybe FIXME
-                self.hvc = ds.arr(hvc * unitVel * a, "cm/s") # maybe FIXME
+                self.max_circular_velocity = ds.arr(vcmax * unitVel * a, "cm/s") # maybe FIXME
+                self.half_mass_circular_velocity = ds.arr(hvc * unitVel * a, "cm/s") # maybe FIXME
                 self.dv = ds.arr(dv * unitVel * a, "cm/s") # maybe FIXME
+                self.max_velocity_radius = rmvc * L
+                self.half_mass_radius = rhm * L
+                self.outer_radius = outr * L 
 
 	
 
