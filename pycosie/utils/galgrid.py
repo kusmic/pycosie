@@ -263,6 +263,7 @@ class TestGalaxyGrid():
                 self.gasMetalMetallicityGrids[__metalArr[mi]] = np.zeros((gridLength, gridLength, gridLength))
 
             __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
+            self.gasParticlePreCoords = __gOartCoord # testing if inputted coords actually like if direct pull
             __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
             __sPartID = sp["PartType4","ParticleIDs"].value
             __sPartZ = sp["PartType4","metallicity"].value
@@ -344,6 +345,7 @@ class TestGalaxyGrid():
                 __gPartCoord[i] = __gPartCoord[i] - np.array([xMin, yMin, zMin])
             for i in range(len(__sPartCoord)):
                 __sPartCoord[i] = __sPartCoord[i] - np.array([xMin, yMin, zMin])
+                
                 
             self.originPoint = np.array([xMin, yMin, zMin])
             self.zoomLength = ds.cosmology.arr(L, "kpccm/h")
