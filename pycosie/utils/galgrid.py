@@ -369,6 +369,7 @@ class TestGalaxyGrid():
             self.gasParticleMetallicites = __gPartZarr # saving outputs to test/debug
             self.gasParticleDensity = sp["PartType0","density"].to("g/cm**3").value
             self.gasParticleIDs = sp["PartType0", "ParticleIDs"].value.astype(int)
+            self.gasParticleCoords = __gPartCoord # saving outputs to test/debug
 
             # So indexing of __gPartZarr is (index of species in metal_arr, index of gas particle)
 
