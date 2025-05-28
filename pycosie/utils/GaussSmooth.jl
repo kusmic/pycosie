@@ -41,7 +41,7 @@ function recenter(coord, domainWidth, Dx::Float64, Dy::Float64, Dz::Float64)
     if Dy > domWidthJl[2]/2
         recenterArr[2] = domWidthJl[2]
     end
-    if Dz > domWidthJl[3]
+    if Dz > domWidthJl[3]/2
         recenterArr[3] = domWidthJl[3]
     end
 
