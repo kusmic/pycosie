@@ -263,7 +263,7 @@ class TestGalaxyGrid():
                 self.gasMetalMetallicityGrids[__metalArr[mi]] = np.zeros((gridLength, gridLength, gridLength))
 
             __gPartCoord = sp["PartType0","Coordinates"].to("kpccm/h").value # ckpc/h
-            self.gasParticlePreCoords = __gOartCoord # testing if inputted coords actually like if direct pull
+            self.gasParticlePreCoords = __gPartCoord # testing if inputted coords actually like if direct pull
             __sPartCoord = sp["PartType4","Coordinates"].to("kpccm/h").value
             __sPartID = sp["PartType4","ParticleIDs"].value
             __sPartZ = sp["PartType4","metallicity"].value
