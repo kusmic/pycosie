@@ -269,6 +269,11 @@ class TestGalaxyGrid():
             __sPartZ = sp["PartType4","metallicity"].value
             __sPartM = sp["PartType4","Masses"].to("Msun").value
             __sPartT = ds.current_time.to("yr").value-sp["PartType4","StellarFormationTime"].value
+            
+            # Pulling out for tests
+            self.gasParticleMetallicites = __gPartZarr # saving outputs to test/debug
+            self.gasParticleDensity = sp["PartType0","density"].to("g/cm**3").value
+            self.gasParticleIDs = sp["PartType0", "ParticleIDs"].value.astype(int)
 
             #print(len(__sPartCoord))
             self.starCount = len(__sPartCoord)
@@ -368,9 +373,6 @@ class TestGalaxyGrid():
             __gPartZarr = []
             for i in range(10):
                 __gPartZarr.append( sp["PartType0", f"Metallicity_{i:02}"].value ) # unitless
-            self.gasParticleMetallicites = __gPartZarr # saving outputs to test/debug
-            self.gasParticleDensity = sp["PartType0","density"].to("g/cm**3").value
-            self.gasParticleIDs = sp["PartType0", "ParticleIDs"].value.astype(int)
             self.gasParticleCoords = __gPartCoord # saving outputs to test/debug
 
             # So indexing of __gPartZarr is (index of species in metal_arr, index of gas particle)
